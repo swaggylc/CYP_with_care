@@ -10,6 +10,9 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 const app = createApp(App)
 
+// 引入全局样式
+import '@/styles/index.scss'
+
 // 引入自定义插件对象：注册全局组件
 import globalComponents from '@/components/index.ts'
 // 安装自定义插件对象

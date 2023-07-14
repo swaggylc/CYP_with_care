@@ -23,4 +23,9 @@ import {
 } from '@element-plus/icons-vue'
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+h1{
+  color: red;
+}
+
+</style>
