@@ -10,10 +10,16 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 const app = createApp(App)
 
+// 引入自定义插件对象：注册全局组件
+import globalComponents from '@/components/index.ts'
+// 安装自定义插件对象
+app.use(globalComponents)
+
 // 安装 ElementPlus
 app.use(ElementPlus, {
   locale: zhCn,
 })
 // svg插件需要的配置
 import 'virtual:svg-icons-register'
+
 app.mount('#app')

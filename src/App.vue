@@ -21,7 +21,6 @@ import {
   Search,
   Star,
 } from '@element-plus/icons-vue'
-import SvgIcon from '@/components/SvgIcon/index.vue'
 </script>
 
 <style scoped></style>
