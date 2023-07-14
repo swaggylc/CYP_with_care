@@ -25,4 +25,5 @@ app.use(ElementPlus, {
 // svg插件需要的配置
 import 'virtual:svg-icons-register'
 
+
 app.mount('#app')
