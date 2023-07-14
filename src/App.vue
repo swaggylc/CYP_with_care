@@ -1,31 +1,28 @@
 <template>
   <div>
-    <h1>vite</h1>
-    <el-button type="primary">Primary</el-button>
-    <el-button :icon="Search" circle />
-    <el-button type="primary" :icon="Edit" circle />
-    <el-button type="success" :icon="Check" circle />
-    <el-button type="info" :icon="Message" circle />
-    <el-button type="warning" :icon="Star" circle />
-    <el-button type="danger" :icon="Delete" circle />
-    <SvgIcon name="home" color="red" width='100px' height="100px" />
+    <h1>测试axios</h1>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-} from '@element-plus/icons-vue'
+import { onMounted } from 'vue';
+import request from './utils/request';
+
+onMounted(() => {
+  login()
+});
+// 定义登录的方法
+const login = async () => {
+  let res: any = await request({
+    method: 'POST',
+    url: '/user/login',
+    data: {
+      username: 'admin',
+      password: '111111'
+    }
+  })
+  console.log(res)
+}
 </script>
 
-<style scoped lang="scss">
-h1{
-  color: red;
-}
-
-</style>
+<style scoped></style>
