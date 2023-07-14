@@ -8,6 +8,7 @@
     <el-button type="info" :icon="Message" circle />
     <el-button type="warning" :icon="Star" circle />
     <el-button type="danger" :icon="Delete" circle />
+    <SvgIcon name="home" color="red" width='100px' height="100px" />
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import {
   Search,
   Star,
 } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 </script>
 
 <style scoped></style>

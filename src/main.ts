@@ -14,4 +14,6 @@ const app = createApp(App)
 app.use(ElementPlus, {
   locale: zhCn,
 })
+// svg插件需要的配置
+import 'virtual:svg-icons-register'
 app.mount('#app')
