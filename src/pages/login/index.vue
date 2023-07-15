@@ -77,17 +77,37 @@ const loginSubmit = async () => {
         })
     }
 }
+// 自定义用户名验证规则
+const validatorUsername = (rule: any, value: any, next: any) => {
+    if (value.length >= 5 && value.length <= 10) {
+        next()
+    } else {
+        console.log(value);
+
+        next(new Error('用户名必须是5-10位'))
+    }
+}
+// 自定义密码验证规则
+const validatorPassword = (rule: any, value: any, next: any) => {
+    if (value.length >= 6 && value.length <= 10) {
+        next()
+    } else {
+        next(new Error('密码必须是6-10位'))
+    }
+}
 // 定义表单验证规则
 const rules = {
     username: [
         { required: true, message: '请输入用户名', trigger: 'change' },
-        { min: 5, max: 10, message: '长度在 5 到 10 个字符', trigger: 'change' }
+        { validator: validatorUsername, trigger: 'change' }
     ],
     password: [
         { required: true, message: '请输入密码', trigger: 'change' },
-        { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'change' }
+        { validator: validatorPassword, trigger: 'change' }
+
     ]
 }
+
 
 
 </script>
