@@ -2,7 +2,7 @@
     <div class="layout">
         <!-- 左侧菜单 -->
         <div class="left">
-            left
+            <Logo></Logo>
         </div>
         <!-- 顶部导航 -->
         <div class="top">
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-
+import Logo from './logo/index.vue'
 </script>
 
 <style scoped lang="scss">
@@ -28,6 +28,7 @@
         background-color: $leftMenuBgColor;
         width: $leftMenuWidth;
         height: 100vh;
+        padding: 20px;
     }
 
     .top {
