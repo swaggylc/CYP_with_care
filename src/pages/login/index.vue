@@ -37,6 +37,8 @@ import { ElNotification } from 'element-plus';
 import useUserStore from '@/store/modules/user.ts';
 // 获取用户仓库实例
 const userStore = useUserStore();
+// 获取当前时间
+import { getNowTime } from '@/utils/time.ts';
 
 // 收集表单数据
 import { reactive } from 'vue';
@@ -58,10 +60,9 @@ const loginSubmit = async () => {
             path: '/home'
         })
         ElNotification({
-            title: '登陆成功',
+            title: 'HI,' + getNowTime(),
             message: '欢迎回来',
             type: 'success'
-
         })
     } catch (error) {
         // 登陆失败
@@ -71,6 +72,8 @@ const loginSubmit = async () => {
         })
     }
 }
+
+
 
 </script>
 
