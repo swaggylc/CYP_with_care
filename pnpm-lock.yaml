@@ -17,11 +17,17 @@ dependencies:
   vue:
     specifier: ^3.2.47
     version: 3.3.4
+  vue-router:
+    specifier: ^4.2.4
+    version: 4.2.4(vue@3.3.4)
 
 devDependencies:
   '@babel/eslint-parser':
     specifier: ^7.22.9
     version: 7.22.9(@babel/core@7.22.9)(eslint@8.44.0)
+  '@types/vue-router':
+    specifier: ^2.0.0
+    version: 2.0.0(vue@3.3.4)
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.0.0
     version: 6.0.0(@typescript-eslint/parser@6.0.0)(eslint@8.44.0)(typescript@5.1.6)
@@ -833,6 +839,15 @@ packages:
       '@types/node': 20.4.2
     dev: true
 
+  /@types/vue-router@2.0.0(vue@3.3.4):
+    resolution: {integrity: sha512-E454lQ6tp9ftVWdZ8VGZpRcIV4YeqVAcx/uifl3P1GGwscYsxOFdYfgIuKasKO0Fm6Np2JM/L378D3bcRQE9hg==}
+    deprecated: This is a stub types definition for vue-router (https://github.com/vuejs/vue-router). ecmarkup provides its own type definitions, so you don\'t need @types/ecmarkup installed!
+    dependencies:
+      vue-router: 4.2.4(vue@3.3.4)
+    transitivePeerDependencies:
+      - vue
+    dev: true
+
   /@types/web-bluetooth@0.0.16:
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
     dev: false
@@ -1033,6 +1048,9 @@ packages:
     dependencies:
       '@vue/compiler-dom': 3.3.4
       '@vue/shared': 3.3.4
+
+  /@vue/devtools-api@6.5.0:
+    resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==}
 
   /@vue/language-core@1.8.4(typescript@5.1.6):
     resolution: {integrity: sha512-pnNtNcJVfkGYluW0vsVO+Y1gyX+eA0voaS7+1JOhCp5zKeCaL/PAmGYOgfvwML62neL+2H8pnhY7sffmrGpEhw==}
@@ -5355,6 +5373,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /vue-router@4.2.4(vue@3.3.4):
+    resolution: {integrity: sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      vue: 3.3.4
 
   /vue-template-compiler@2.7.14:
     resolution: {integrity: sha512-zyA5Y3ArvVG0NacJDkkzJuPQDF8RFeRlzV2vLeSnhSpieO6LK2OVbdLPi5MPPs09Ii+gMO8nY4S3iKQxBxDmWQ==}
