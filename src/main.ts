@@ -15,6 +15,9 @@ import 'virtual:svg-icons-register'
 import globalComponents from '@/components/index.ts'
 // 引入路由
 import router from '@/router/index.ts'
+// 引入仓库
+import { pinia } from '@/store/index.ts'
+
 const app = createApp(App)
 // 安装自定义插件对象
 app.use(globalComponents)
@@ -24,4 +27,6 @@ app.use(ElementPlus, {
 })
 // 注册模板路由
 app.use(router)
+// 注册大仓库
+app.use(pinia)
 app.mount('#app')

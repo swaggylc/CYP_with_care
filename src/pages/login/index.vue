@@ -16,7 +16,7 @@
                             show-password></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" style="width: 100%;">登录</el-button>
+                        <el-button type="primary" style="width: 100%;" @click="loginSubmit">登录</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -26,12 +26,49 @@
 
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue';
+
+// 引入ts类型
+import { LoginParamsType } from '@/API/user/type.ts';
+import { useRouter } from 'vue-router';
+const $router = useRouter();
+import { ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus';
+// 引入用户仓库
+import useUserStore from '@/store/modules/user.ts';
+// 获取用户仓库实例
+const userStore = useUserStore();
+
 // 收集表单数据
 import { reactive } from 'vue';
-const formData = reactive({
+const formData: LoginParamsType = reactive({
     username: 'admin',
     password: '111111'
 });
+
+// 点击登录按钮的回调
+const loginSubmit = async () => {
+    // 通知仓库发送登陆请求
+    try {
+        // 登陆成功
+        await userStore.userLogin(formData)
+        // 跳转到首页
+        $router.push({
+            path: '/home'
+        })
+        ElNotification({
+            title: '登陆成功',
+            message: '欢迎回来',
+            type: 'success'
+
+        })
+    } catch (error) {
+        // 登陆失败
+        ElMessage({
+            message: (error as Error).message,
+            type: 'error'
+        })
+    }
+}
 
 </script>
 

@@ -6,6 +6,7 @@ export interface LoginParamsType {
 // 登录接口返回数据的data的ts类型
 interface dataType {
   token: string
+  message: string
 }
 // 登录接口返回数据的ts类型
 export interface LoginResultModel {
