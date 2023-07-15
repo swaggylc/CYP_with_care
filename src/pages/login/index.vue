@@ -3,15 +3,15 @@
         <el-row>
             <el-col :span="12" :xs="0"></el-col>
             <el-col :span="12" :xs="24">
-                <el-form class="login_form">
+                <el-form class="login_form" :model="formData" :rules="rules" ref="loginForm">
                     <div class="login_text">
                         <h1>HELLO</h1>
                         <h2>欢迎来到xx运营平台</h2>
                     </div>
-                    <el-form-item>
+                    <el-form-item prop="username">
                         <el-input v-model="formData.username" placeholder="请输入用户名" :prefix-icon="User"></el-input>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="password">
                         <el-input v-model="formData.password" type="password" placeholder="请输入密码" :prefix-icon="Lock"
                             show-password></el-input>
                     </el-form-item>
@@ -41,14 +41,19 @@ const userStore = useUserStore();
 import { getNowTime } from '@/utils/time.ts';
 
 // 收集表单数据
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 const formData: LoginParamsType = reactive({
     username: 'admin',
     password: '111111'
 });
+// 获取表单元素
+let loginForm = ref()
 
 // 点击登录按钮的回调
 const loginSubmit = async () => {
+
+    // 表单验证
+    await loginForm.value.validate()
     // 使用Pinia发送请求的主要优势之一是能够将请求的结果保存在Pinia的状态中，
     // 并自动更新相关组件。这样，当请求返回数据时，与该数据相关的组件将自动更新，而无需手动处理和同步数据。
     // 通知仓库发送登陆请求
@@ -72,7 +77,17 @@ const loginSubmit = async () => {
         })
     }
 }
-
+// 定义表单验证规则
+const rules = {
+    username: [
+        { required: true, message: '请输入用户名', trigger: 'change' },
+        { min: 5, max: 10, message: '长度在 5 到 10 个字符', trigger: 'change' }
+    ],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'change' },
+        { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'change' }
+    ]
+}
 
 
 </script>
