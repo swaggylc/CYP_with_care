@@ -47,6 +47,8 @@ const formData: LoginParamsType = reactive({
 
 // 点击登录按钮的回调
 const loginSubmit = async () => {
+    // 使用Pinia发送请求的主要优势之一是能够将请求的结果保存在Pinia的状态中，
+    // 并自动更新相关组件。这样，当请求返回数据时，与该数据相关的组件将自动更新，而无需手动处理和同步数据。
     // 通知仓库发送登陆请求
     try {
         // 登陆成功

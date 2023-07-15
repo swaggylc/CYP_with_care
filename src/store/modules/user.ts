@@ -4,11 +4,14 @@ import { defineStore } from 'pinia'
 import { login } from '@/API/user/index.ts'
 // 引入ts类型
 import type { LoginParamsType, LoginResultModel } from '@/API/user/type.ts'
+import type { UserState } from '@/store/type/type.ts'
+// 引入本地存储方法
+import { SET_SOME, GET_SOME } from '@/utils/localFunction'
 // 创建小仓库
 let useUserStore = defineStore('User', {
-  state: () => {
+  state: (): UserState => {
     return {
-      token: localStorage.getItem('token') || '',
+      token: GET_SOME('TOKEN') || '',
     }
   },
 
@@ -19,9 +22,9 @@ let useUserStore = defineStore('User', {
       let res: LoginResultModel = await login(data)
       //   console.log(res);
       if (res.code === 200) {
-        this.token = res.data.token
+        this.token = res.data.token as string
         // 将token存储到本地
-        localStorage.setItem('token', res.data.token)
+        SET_SOME('TOKEN', res.data.token as string)
         // 返回一个成功的promise
         return 'ok'
       } else {
