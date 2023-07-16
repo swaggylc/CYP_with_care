@@ -34,15 +34,7 @@ export const constantRoutes = [
         meta: {
           title: '首页',
           hidden: false,
-        },
-      },
-      {
-        name: 'about',
-        path: '/about',
-        component: () => import('@/pages/home/index.vue'),
-        meta: {
-          title: '关于',
-          hidden: false,
+          icon: 'House',
         },
       },
     ],
