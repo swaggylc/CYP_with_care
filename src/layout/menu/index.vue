@@ -3,10 +3,10 @@
         <!-- 没有子路由 -->
         <template v-if="!item.children">
             <el-menu-item v-if="!item.meta.hidden" :index="item.path" @click="goRoute">
+                <el-icon>
+                    <component :is="item.meta.icon"></component>
+                </el-icon>
                 <template #title>
-                    <el-icon>
-                        <component :is="item.meta.icon"></component>
-                    </el-icon>
                     <span>{{ item.meta?.title }}</span>
                 </template>
             </el-menu-item>
@@ -15,10 +15,10 @@
         <!-- 有子路由但数量为一 -->
         <template v-if="item.children && item.children.length == 1">
             <el-menu-item v-if="!item.children[0].meta.hidden" :index="item.children[0].path" @click="goRoute">
+                <el-icon>
+                    <component :is="item.children[0].meta.icon"></component>
+                </el-icon>
                 <template #title>
-                    <el-icon>
-                        <component :is="item.children[0].meta.icon"></component>
-                    </el-icon>
                     <span>{{ item.children[0].meta?.title }}</span>
                 </template>
             </el-menu-item>
@@ -47,7 +47,7 @@ const $router = useRouter()
 
 const goRoute = (data: any) => {
     // data中的index属性就是路由路径
-    console.log(data.index)
+    // console.log(data.index)
     $router.push({
         path: data.index
     })

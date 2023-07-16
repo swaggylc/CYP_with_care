@@ -5,14 +5,15 @@
             <Logo></Logo>
             <!-- 菜单 -->
             <el-scrollbar class="scrollbar">
-                <el-menu class="el-menu-vertical-demo" background-color="#001529" text-color="#fff">
+                <el-menu :default-active="currentPath" class="el-menu-vertical-demo" background-color="#001529"
+                    text-color="#fff">
                     <Menu :menuData="userStore.menuList"></Menu>
                 </el-menu>
             </el-scrollbar>
         </div>
         <!-- 顶部导航 -->
         <div class="top">
-            top
+            <Topbar />
         </div>
         <!-- 内容展示 -->
         <div class="content">
@@ -22,16 +23,26 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 // 左侧菜单logo
 import Logo from './logo/index.vue'
 // 左侧菜单
 import Menu from './menu/index.vue'
 // 内容展示
 import Main from './main/index.vue'
+// 引入顶部导航
+import Topbar from './topbar/index.vue'
 
 // 获取用户仓库
 import useUserStore from '@/store/modules/user.ts'
 let userStore = useUserStore()
+import { useRoute } from 'vue-router';
+let $route = useRoute()
+
+// 当前路径
+let currentPath = ref($route.path)
+
+
 
 </script>
 
@@ -60,7 +71,6 @@ let userStore = useUserStore()
         position: fixed;
         top: 0;
         left: $leftMenuWidth;
-        background-color: $topNavBgColor;
         width: calc(100% - #{$leftMenuWidth});
         height: $topNavHeight;
     }
@@ -73,6 +83,7 @@ let userStore = useUserStore()
         top: $topNavHeight;
         padding: 20px;
         overflow: auto;
+        background-color: orange;
     }
 }
 </style>
