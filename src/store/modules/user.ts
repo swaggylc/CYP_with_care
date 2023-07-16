@@ -7,11 +7,14 @@ import type { LoginParamsType, LoginResultModel } from '@/API/user/type.ts'
 import type { UserState } from '@/store/type/type.ts'
 // 引入本地存储方法
 import { SET_SOME, GET_SOME } from '@/utils/localFunction'
+// 引入常量路由
+import { constantRoutes } from '@/router/routes.ts'
 // 创建小仓库
 let useUserStore = defineStore('User', {
   state: (): UserState => {
     return {
       token: GET_SOME('TOKEN') || '',
+      menuList: constantRoutes, // 菜单列表
     }
   },
 
