@@ -5,7 +5,7 @@
             <Logo></Logo>
             <!-- 菜单 -->
             <el-scrollbar class="scrollbar">
-                <el-menu default-active="1" class="el-menu-vertical-demo" background-color="#001529" text-color="#fff">
+                <el-menu class="el-menu-vertical-demo" background-color="#001529" text-color="#fff">
                     <Menu :menuData="userStore.menuList"></Menu>
                 </el-menu>
             </el-scrollbar>
@@ -16,20 +16,18 @@
         </div>
         <!-- 内容展示 -->
         <div class="content">
-            content
+            <Main></Main>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+// 左侧菜单logo
 import Logo from './logo/index.vue'
+// 左侧菜单
 import Menu from './menu/index.vue'
-// import {
-//     House,
-//     DataBoard,
-//     Lock,
-//     ShoppingBag,
-// } from '@element-plus/icons-vue'
+// 内容展示
+import Main from './main/index.vue'
 
 // 获取用户仓库
 import useUserStore from '@/store/modules/user.ts'
@@ -51,7 +49,8 @@ let userStore = useUserStore()
         .scrollbar {
             height: calc(100vh - 80px);
             border: nono;
-            .el-menu{
+
+            .el-menu {
                 border: none;
             }
         }

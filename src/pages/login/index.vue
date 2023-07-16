@@ -62,7 +62,7 @@ const loginSubmit = async () => {
         await userStore.userLogin(formData)
         // 跳转到首页
         $router.push({
-            path: '/layout'
+            path: '/'
         })
         ElNotification({
             title: 'HI,' + getNowTime(),

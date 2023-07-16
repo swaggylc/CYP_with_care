@@ -2,7 +2,7 @@
     <template v-for="(item, index) in menuData" :key="index">
         <!-- 没有子路由 -->
         <template v-if="!item.children">
-            <el-menu-item v-if="!item.meta.hidden" :index="item.path" @click="goroute">
+            <el-menu-item v-if="!item.meta.hidden" :index="item.path" @click="goRoute">
                 <template #title>
                     <el-icon>
                         <component :is="item.meta.icon"></component>
@@ -14,7 +14,7 @@
 
         <!-- 有子路由但数量为一 -->
         <template v-if="item.children && item.children.length == 1">
-            <el-menu-item v-if="!item.children[0].meta.hidden" :index="item.children[0].path">
+            <el-menu-item v-if="!item.children[0].meta.hidden" :index="item.children[0].path" @click="goRoute">
                 <template #title>
                     <el-icon>
                         <component :is="item.children[0].meta.icon"></component>
@@ -38,12 +38,19 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 defineProps(['menuData'])
+const $router = useRouter()
 
-const goroute=(data:any)=>{
+
+
+
+const goRoute = (data: any) => {
     // data中的index属性就是路由路径
-    console.log(data)
-    // this.$router.push(data)
+    console.log(data.index)
+    $router.push({
+        path: data.index
+    })
 }
 
 
