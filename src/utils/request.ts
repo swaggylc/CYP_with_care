@@ -1,3 +1,5 @@
+import { GET_SOME } from '@/utils/localFunction'
+
 import { ElMessage } from 'element-plus'
 // 进行axios的二次封装，使用请求与响应拦截器
 import axios from 'axios'
@@ -10,6 +12,13 @@ let request = axios.create({
 request.interceptors.request.use((config) => {
   // config配置对象，headers属性，存放请求头信息，经常给服务器携带公共参数，如token
   // 返回config配置对象
+  // 从本地存储中获取token
+  let token = GET_SOME('TOKEN')
+  // 判断token是否存在
+  if (token) {
+    // 给请求头添加token
+    config.headers.token = token
+  }
   return config
 })
 // 第三步：配置响应拦截器

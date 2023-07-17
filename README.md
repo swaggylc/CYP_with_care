@@ -37,3 +37,27 @@
 3. ##### 全屏模式的切换
 
     可利用插件，也可利用原生的DOM方法，`document.documentElement.*requestFullscreen*() `与 `document.*exitFullscreen*()`
+
+4. ##### 利用请求头携带token获取用户信息
+
+    可在axios的请求拦截器中设置请求头携带公共参数如token
+
+    ```js
+    // 第二步：配置请求拦截器
+    request.interceptors.request.use((config) => {
+      // config配置对象，headers属性，存放请求头信息，经常给服务器携带公共参数，如token
+      // 返回config配置对象
+      // 从本地存储中获取token
+      let token = GET_SOME('TOKEN')
+      // 判断token是否存在
+      if (token) {
+        // 给请求头添加token
+        config.headers.token = token
+      }
+      return config
+    })
+    ```
+
+5. 
+
+​			

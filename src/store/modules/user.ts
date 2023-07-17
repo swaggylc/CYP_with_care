@@ -1,7 +1,7 @@
 // 用户相关的小仓库
 import { defineStore } from 'pinia'
 // 引入登录接口
-import { login } from '@/API/user/index.ts'
+import { login, getUserInfo } from '@/API/user/index.ts'
 // 引入ts类型
 import type { LoginParamsType, LoginResultModel } from '@/API/user/type.ts'
 import type { UserState } from '@/store/type/type.ts'
@@ -15,6 +15,8 @@ let useUserStore = defineStore('User', {
     return {
       token: GET_SOME('TOKEN') || '',
       menuList: constantRoutes, // 菜单列表
+      username: '',
+      avatar: '',
     }
   },
 
@@ -33,6 +35,15 @@ let useUserStore = defineStore('User', {
       } else {
         // 返回一个失败的promise
         return Promise.reject(new Error(res.data.message))
+      }
+    },
+    // 获取用户信息的方法
+    async GetUserInfo() {
+      let res: any = await getUserInfo()
+      if (res.code == 200) {
+        // 将用户信息存储到小仓库中
+        this.username = res.data.checkUser.username
+        this.avatar = res.data.checkUser.avatar
       }
     },
   },

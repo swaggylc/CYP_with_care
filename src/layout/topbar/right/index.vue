@@ -3,10 +3,10 @@
         <el-button type="primary" :icon="Refresh" circle size="large" @click="refresh" />
         <el-button type="success" :icon="FullScreen" circle size="large" @click="fullScreen" />
         <el-button type="info" :icon="Setting" circle size="large" />
-        <img src="../../../../public/ecut.jpg" alt="">
+        <img :src="userStore.avatar" alt="">
         <el-dropdown trigger="click">
             <span class="el-dropdown-link">
-                admin
+                {{ userStore.username }}
                 <el-icon class="el-icon--right">
                     <arrow-down />
                 </el-icon>
@@ -26,7 +26,10 @@ import { Refresh, FullScreen, Setting } from '@element-plus/icons-vue'
 // @ts-ignore
 import useLayoutStore from '@/store/modules/menu.ts'
 let useUserLayoutStore = useLayoutStore()
-
+// 获取用户小仓库
+// @ts-ignore
+import useUserStore from '@/store/modules/user.ts'
+let userStore = useUserStore()
 
 
 // 点击刷新的回调
