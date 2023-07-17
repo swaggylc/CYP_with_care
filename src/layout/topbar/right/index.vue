@@ -24,7 +24,11 @@
 import { Refresh, FullScreen, Setting } from '@element-plus/icons-vue'
 
 </script>
-
+<script lang="ts">
+export default {
+    name: 'Right',
+}
+</script>
 <style scoped lang="scss">
 .right {
     display: flex;

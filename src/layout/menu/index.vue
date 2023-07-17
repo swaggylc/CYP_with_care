@@ -57,15 +57,8 @@ const goRoute = (data: any) => {
 
 
 
-
-
-
-
-
-
-
-
 </script>
+
 <script lang="ts">
 export default {
     name: 'Menu'

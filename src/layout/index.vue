@@ -1,22 +1,22 @@
 <template>
     <div class="layout">
         <!-- 左侧菜单 -->
-        <div class="left">
-            <Logo></Logo>
+        <div class="left" :class="{ fold: useUserLayoutStore.isCollapse }">
+            <Logo class="logo"></Logo>
             <!-- 菜单 -->
             <el-scrollbar class="scrollbar">
-                <el-menu :default-active="currentPath" class="el-menu-vertical-demo" background-color="#001529"
-                    text-color="#fff">
+                <el-menu :collapse="useUserLayoutStore.isCollapse" :default-active="currentPath"
+                    class="el-menu-vertical-demo" background-color="#001529" text-color="#fff">
                     <Menu :menuData="userStore.menuList"></Menu>
                 </el-menu>
             </el-scrollbar>
         </div>
         <!-- 顶部导航 -->
-        <div class="top">
+        <div class="top" :class="{ fold: useUserLayoutStore.isCollapse }">
             <Topbar />
         </div>
         <!-- 内容展示 -->
-        <div class="content">
+        <div class="content" :class="{ fold: useUserLayoutStore.isCollapse }">
             <Main></Main>
         </div>
     </div>
@@ -36,6 +36,10 @@ import Topbar from './topbar/index.vue'
 // 获取用户仓库
 import useUserStore from '@/store/modules/user.ts'
 let userStore = useUserStore()
+// @ts-ignore
+import useLayoutStore from '@/store/modules/menu.ts'
+let useUserLayoutStore = useLayoutStore()
+//@ts-ignore
 import { useRoute } from 'vue-router';
 let $route = useRoute()
 
@@ -44,6 +48,11 @@ let currentPath = ref($route.path)
 
 
 
+</script>
+<script lang="ts">
+export default {
+    name: 'Layout',
+}
 </script>
 
 <style scoped lang="scss">
@@ -55,11 +64,17 @@ let currentPath = ref($route.path)
         background-color: $leftMenuBgColor;
         width: $leftMenuWidth;
         height: 100vh;
-        padding: 20px;
+        padding: 20px 0;
+        transition: all 0.5s;
+
+        &.fold {
+            width: $leftMenuCollapsedWidth;
+        }
 
         .scrollbar {
             height: calc(100vh - 80px);
             border: nono;
+            margin-left: 10px;
 
             .el-menu {
                 border: none;
@@ -73,6 +88,12 @@ let currentPath = ref($route.path)
         left: $leftMenuWidth;
         width: calc(100% - #{$leftMenuWidth});
         height: $topNavHeight;
+        transition: all 0.5s;
+
+        &.fold {
+            width: calc(100% - #{$leftMenuCollapsedWidth});
+            left: $leftMenuCollapsedWidth
+        }
     }
 
     .content {
@@ -84,6 +105,11 @@ let currentPath = ref($route.path)
         padding: 20px;
         overflow: auto;
         background-color: orange;
+        transition: all 0.5s;
+        &.fold {
+            width: calc(100% - #{$leftMenuCollapsedWidth});
+            left: $leftMenuCollapsedWidth
+        }
     }
 }
 </style>

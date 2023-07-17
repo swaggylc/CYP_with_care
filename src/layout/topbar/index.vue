@@ -15,7 +15,11 @@ import Left from './left/index.vue'
 // 引入右侧组件
 import Right from './right/index.vue'
 </script>
-
+<script lang="ts">
+export default {
+    name: 'Topbar',
+}
+</script>
 <style scoped lang="scss">
 .topbar {
     display: flex;

@@ -8,13 +8,18 @@
 <script setup lang="ts">
 
 </script>
-
+<script lang="ts">
+export default {
+    name: 'Logo',
+}
+</script>
 <style scoped lang="scss">
 .logo {
     display: flex;
-    justify-content: center;
     width: 100%;
-
+    // 不换行
+    white-space: nowrap;
+    margin-left: 10px;
     img {
         width: 60px;
         height: 60px;
