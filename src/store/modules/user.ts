@@ -6,7 +6,7 @@ import { login, getUserInfo } from '@/API/user/index.ts'
 import type { LoginParamsType, LoginResultModel } from '@/API/user/type.ts'
 import type { UserState } from '@/store/type/type.ts'
 // 引入本地存储方法
-import { SET_SOME, GET_SOME } from '@/utils/localFunction'
+import { SET_SOME, GET_SOME,REMOVE_SOME } from '@/utils/localFunction'
 // 引入常量路由
 import { constantRoutes } from '@/router/routes.ts'
 // 创建小仓库
@@ -44,7 +44,21 @@ let useUserStore = defineStore('User', {
         // 将用户信息存储到小仓库中
         this.username = res.data.checkUser.username
         this.avatar = res.data.checkUser.avatar
+        return 'ok'
+      } else {
+        return Promise.reject('获取用户信息失败！')
       }
+    },
+    // 退出登录的方法
+    async logout() {
+      // 清空token
+      this.token = ''
+      // 清空本地存储
+      REMOVE_SOME('TOKEN')
+      // 清空用户信息
+      this.username = ''
+      this.avatar = ''
+      return 'ok'
     },
   },
   getters: {},

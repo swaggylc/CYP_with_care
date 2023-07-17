@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 // 引入移除token的方法
-import { REMOVE_SOME } from '@/utils/localFunction.ts'
 import { Refresh, FullScreen, Setting } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router';
 let $router = useRouter()
@@ -57,7 +56,7 @@ const fullScreen = () => {
 // 退出登陆的回调
 const logout = () => {
     // 清空token
-    REMOVE_SOME('TOKEN')
+    userStore.logout()
     // 跳转到登陆页面
     $router.push({
         path: '/login',

@@ -5,6 +5,14 @@ import router from './router/index.ts'
 import NProgress from 'nprogress'
 // 引入进度条样式
 import 'nprogress/nprogress.css'
+// 引入仓库
+import { pinia } from './store/index.ts'
+// 引入用户仓库
+//@ts-ignore
+import useUserStore from '@/store/modules/user.ts'
+let userStore = useUserStore(pinia)
+// 引入本地存储方法
+import { REMOVE_SOME } from '@/utils/localFunction.ts'
 
 // 设置进度条配置
 NProgress.configure({ showSpinner: false })
@@ -20,12 +28,59 @@ NProgress.configure({ showSpinner: false })
  * @Date: 2023-7-17 19:32:00
  * @LastEditors: swaggy
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  document.title = 'ECUT运营平台-' + to.meta.title
   // 访问路由前触发
   // 开启进度条
   NProgress.start()
-
-  next()
+  // 判断仓库中是否有token，判断用户是否登录
+  let token = userStore.token
+  //   获取用户信息
+  let username = userStore.username
+  // 已登录
+  if (token) {
+    if (to.path === '/login') {
+      next({
+        path: '/',
+      })
+    } else {
+      // 登陆成功后，访问其他页面
+      // 判断是否有用户信息
+      if (username) {
+        next()
+      } else {
+        // 没有用户信息，获取用户信息
+        try {
+          await userStore.GetUserInfo()
+          next()
+        } catch (error) {
+          // 有token，但是获取用户信息失败，token失效
+          // 清空token
+          await userStore.logout()
+          next({
+            path: '/login',
+            query: {
+              redirect: to.path,
+            },
+          })
+        }
+      }
+    }
+  } else {
+    // 未登录
+    // 判断是否访问登录页面
+    if (to.path === '/login') {
+      next()
+    } else {
+      // 跳转到登录页面
+      next({
+        path: '/login',
+        query: {
+          redirect: to.path,
+        },
+      })
+    }
+  }
 })
 
 // 全局后置钩子
@@ -34,3 +89,6 @@ router.afterEach((to, from) => {
   // 关闭进度条
   NProgress.done()
 })
+
+// 用户未登录，只能访问登录页面，访问其他页面重定向到登录页面
+// 用户已登录，可以访问所有页面，但是不能访问登录页面，访问登录页面重定向到首页
