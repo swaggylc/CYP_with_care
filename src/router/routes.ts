@@ -16,14 +16,13 @@ export const constantRoutes = [
     path: '/',
     component: () => import('@/layout/index.vue'),
     meta: {
-      title: 'layout',
       hidden: false,
     },
     redirect: '/home',
     children: [
       {
         name: 'home',
-        path: 'home',
+        path: '/home',
         component: () => import('@/pages/home/index.vue'),
         meta: {
           title: '首页',
@@ -54,6 +53,7 @@ export const constantRoutes = [
       hidden: false,
       icon: 'Lock',
     },
+    redirect: '/acl/user',
     children: [
       {
         name: 'user',
@@ -97,6 +97,7 @@ export const constantRoutes = [
       hidden: false,
       icon: 'ShoppingTrolley',
     },
+    redirect: '/goods/brand',
     children: [
       {
         name: 'brand',

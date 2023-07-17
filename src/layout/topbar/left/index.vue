@@ -8,28 +8,27 @@
         </div>
         <div class="bread">
             <el-breadcrumb :separator-icon="DArrowRight">
-                <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-                <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+                <!-- 动态展示路由标题 -->
+                <el-breadcrumb-item :to="item.path" v-for="(item,index) in $route.matched" :key="index" v-show="item.meta.title">
+                <span>{{ item.meta.title }}</span>
+                </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router';
 import { DArrowRight } from '@element-plus/icons-vue'
-
 import useLayoutStore from '@/store/modules/menu.ts'
-
 let useUserLayoutStore = useLayoutStore()
 
-
+let $route = useRoute()
 
 // 点击图标的回调
 const changeStyle = () => {
     useUserLayoutStore.isCollapse = !useUserLayoutStore.isCollapse
-
 }
-
 
 
 
