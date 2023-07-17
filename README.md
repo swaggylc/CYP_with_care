@@ -26,7 +26,7 @@
 
     注意：递归组件必须有name，无论什么情况，<el-menu-item> 还是 <el-sub-menu> 都必须有唯一值index
 
-2. el-menu右侧的白色边框隐藏
+2. ##### el-menu右侧的白色边框隐藏
 
     .el-menu{
 
@@ -34,4 +34,6 @@
 
     }
 
-3. 
+3. ##### 全屏模式的切换
+
+    可利用插件，也可利用原生的DOM方法，`document.documentElement.*requestFullscreen*() `与 `document.*exitFullscreen*()`

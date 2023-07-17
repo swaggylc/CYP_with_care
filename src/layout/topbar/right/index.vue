@@ -1,7 +1,7 @@
 <template>
     <div class="right">
         <el-button type="primary" :icon="Refresh" circle size="large" @click="refresh" />
-        <el-button type="success" :icon="FullScreen" circle size="large" />
+        <el-button type="success" :icon="FullScreen" circle size="large" @click="fullScreen" />
         <el-button type="info" :icon="Setting" circle size="large" />
         <img src="../../../../public/ecut.jpg" alt="">
         <el-dropdown trigger="click">
@@ -30,10 +30,22 @@ let useUserLayoutStore = useLayoutStore()
 
 
 // 点击刷新的回调
-const refresh=()=>{
-    useUserLayoutStore.isRefresh=!useUserLayoutStore.isRefresh
+const refresh = () => {
+    useUserLayoutStore.isRefresh = !useUserLayoutStore.isRefresh
 }
-
+// 点击全屏按钮的回调
+const fullScreen = () => {
+    // DOM对象的一个属性，判断是否是全屏状态,若是全屏状态，返回一个ture,否则返回null
+    let full = document.fullscreenElement
+    if (!full) {
+        // 全屏
+        // 文档对象的一个方法，用于将当前的文档对象进入全屏状态
+        document.documentElement.requestFullscreen()
+    } else {
+        // 退出全屏
+        document.exitFullscreen()
+    }
+}
 
 
 
