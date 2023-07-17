@@ -29,8 +29,9 @@ import { User, Lock } from '@element-plus/icons-vue';
 
 // 引入ts类型
 import { LoginParamsType } from '@/API/user/type.ts';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 const $router = useRouter();
+const $route = useRoute();
 import { ElMessage } from 'element-plus';
 import { ElNotification } from 'element-plus';
 // 引入用户仓库
@@ -41,7 +42,7 @@ const userStore = useUserStore();
 import { getNowTime } from '@/utils/time.ts';
 
 // 收集表单数据
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 const formData: LoginParamsType = reactive({
     username: 'admin',
     password: '111111'
@@ -49,9 +50,14 @@ const formData: LoginParamsType = reactive({
 // 获取表单元素
 let loginForm = ref()
 
+
+onMounted(() => {
+    console.log($route);
+
+})
+
 // 点击登录按钮的回调
 const loginSubmit = async () => {
-
     // 表单验证
     await loginForm.value.validate()
     // 使用Pinia发送请求的主要优势之一是能够将请求的结果保存在Pinia的状态中，
@@ -60,10 +66,18 @@ const loginSubmit = async () => {
     try {
         // 登陆成功
         await userStore.userLogin(formData)
-        // 跳转到首页
-        $router.push({
-            path: '/'
-        })
+        // 跳转
+        if ($route.query.redirect) {
+            $router.push({
+                path: $route.query.redirect as string
+            })
+            // 通知用户小仓库，发送请求，获取用户信息
+            userStore.GetUserInfo();
+        } else {
+            $router.push({
+                path: '/'
+            })
+        }
         ElNotification({
             title: 'HI,' + getNowTime(),
             message: '欢迎回来',
