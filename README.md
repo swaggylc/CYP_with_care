@@ -58,6 +58,24 @@
     })
     ```
 
-5. 
+5. ##### 设置进度条
 
-​			
+    安装：`npm i nprogress`	引入：
+
+    ```
+    // *引入进度条插件*
+    
+    //*@ts-ignore*
+    
+    *import* NProgress *from* '*nprogress*'
+    
+    // *引入进度条样式*
+    
+    *import* '*nprogress/nprogress.css*'
+    ```
+
+    配置进度条：`NProgress.*configure*({ *showSpinner*: *false* })`	去除小圆圈
+
+    设置开始与结束： `NProgress.*start*()`	 `NProgress.*done*()`
+
+6. 

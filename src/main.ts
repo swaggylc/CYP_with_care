@@ -29,4 +29,6 @@ app.use(ElementPlus, {
 app.use(router)
 // 注册大仓库
 app.use(pinia)
+// 引入路由鉴权文件
+import '@/Authentication.ts'
 app.mount('#app')
