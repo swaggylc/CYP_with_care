@@ -1,6 +1,6 @@
 <template>
     <div class="right">
-        <el-button type="primary" :icon="Refresh" circle size="large" />
+        <el-button type="primary" :icon="Refresh" circle size="large" @click="refresh" />
         <el-button type="success" :icon="FullScreen" circle size="large" />
         <el-button type="info" :icon="Setting" circle size="large" />
         <img src="../../../../public/ecut.jpg" alt="">
@@ -22,6 +22,22 @@
 
 <script setup lang="ts">
 import { Refresh, FullScreen, Setting } from '@element-plus/icons-vue'
+// 获取菜单仓库
+// @ts-ignore
+import useLayoutStore from '@/store/modules/menu.ts'
+let useUserLayoutStore = useLayoutStore()
+
+
+
+// 点击刷新的回调
+const refresh=()=>{
+    useUserLayoutStore.isRefresh=!useUserLayoutStore.isRefresh
+}
+
+
+
+
+
 
 </script>
 <script lang="ts">

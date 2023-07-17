@@ -6,6 +6,8 @@ let useLayoutStore = defineStore('layout', {
     return {
       // 是否展示侧边栏
       isCollapse: false,
+      // 控制刷新效果
+      isRefresh: false,
     }
   },
 })
