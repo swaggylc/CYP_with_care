@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { getBrandList } from '@/API/product/brand/index.ts'
+import { getBrandList, addOrUpdateBrand } from '@/API/product/brand/index.ts'
 import type { IBrandListRes, IBrandList, IBrandItem } from '@/API/product/brand/type.ts'
 import type { UploadProps } from 'element-plus'
 import { ElMessage } from 'element-plus'
@@ -61,7 +61,7 @@ let currentPage = ref<number>(1) // 当前页
 let pageSize = ref<number>(5) // 每页显示条数
 let total = ref<number>(0) // 总条数
 let brandList = ref<IBrandList>([]) // 品牌列表
-let dialogFormVisible = ref<boolean>(true) // 对话框显示隐藏
+let dialogFormVisible = ref<boolean>(false) // 对话框显示隐藏
 let formData = reactive<IBrandItem>({   // 对话框表单数据
     logoUrl: '',
     tmName: ''
@@ -76,7 +76,6 @@ onMounted(() => {
 // 获取品牌列表的方法
 const GetBrandList = async () => {
     let res: IBrandListRes = await getBrandList(currentPage.value, pageSize.value)
-    console.log(res);
     if (res.code === 200) {
         brandList.value = res.data.records
         total.value = res.data.total
@@ -98,6 +97,9 @@ const changeSize = (val: number) => {
 }
 // 点击添加品牌按钮的回调
 const addBrand = () => {
+    // 重置表单数据
+    formData.logoUrl = ''
+    formData.tmName = ''
     dialogFormVisible.value = true
 }
 // 点击修改品牌按钮的回调
@@ -109,8 +111,20 @@ const cancel = () => {
     dialogFormVisible.value = false
 }
 // 点击确定按钮的回调
-const confirm = () => {
+const confirm = async () => {
     dialogFormVisible.value = false
+    let res: any = await addOrUpdateBrand(formData)
+    if (res.code === 200) {
+        ElMessage.success('操作成功')
+        // 关闭对话框
+        dialogFormVisible.value = false
+        // 重新获取品牌列表
+        GetBrandList()
+    } else {
+        ElMessage.error('操作失败')
+        // 关闭对话框
+        dialogFormVisible.value = false
+    }
 }
 
 // 文件上传前的钩子
