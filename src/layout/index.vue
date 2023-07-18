@@ -102,7 +102,6 @@ export default {
         top: $topNavHeight;
         padding: 20px;
         overflow: auto;
-        background-color: orange;
         transition: all 0.5s;
 
         &.fold {
