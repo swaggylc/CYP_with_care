@@ -32,11 +32,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getBrandList } from '@/API/product/brand/index.ts'
+import type { IBrandListRes, IBrandList } from '@/API/product/brand/type.ts'
 
 let currentPage = ref<number>(1) // 当前页
 let pageSize = ref<number>(5) // 每页显示条数
 let total = ref<number>(0) // 总条数
-let brandList = ref([]) // 品牌列表
+let brandList = ref<IBrandList>([]) // 品牌列表
 
 
 
@@ -51,7 +52,7 @@ onMounted(() => {
 
 // 获取品牌列表的方法
 const GetBrandList = async () => {
-    let res: any = await getBrandList(currentPage.value, pageSize.value)
+    let res: IBrandListRes = await getBrandList(currentPage.value, pageSize.value)
     console.log(res);
     if (res.code === 200) {
         brandList.value = res.data.records
