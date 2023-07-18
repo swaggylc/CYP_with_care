@@ -32,11 +32,12 @@
     <el-dialog v-model="dialogFormVisible" title="添加品牌">
         <el-form style="width: 70%;">
             <el-form-item label="品牌名称" label-width="80px">
-                <el-input placeholder="请输入品牌名称"></el-input>
+                <el-input placeholder="请输入品牌名称" v-model="formData.tmName"></el-input>
             </el-form-item>
             <el-form-item label="品牌logo" label-width="80px">
-                <el-upload class="avatar-uploader" :show-file-list="false">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <el-upload class="avatar-uploader" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload"
+                    :show-file-list="false" action="/api/admin/product/fileUpload">
+                    <img v-if="formData.logoUrl" :src="formData.logoUrl" class="avatar" />
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
@@ -51,16 +52,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { getBrandList } from '@/API/product/brand/index.ts'
-import type { IBrandListRes, IBrandList } from '@/API/product/brand/type.ts'
-
+import type { IBrandListRes, IBrandList, IBrandItem } from '@/API/product/brand/type.ts'
+import type { UploadProps } from 'element-plus'
+import { ElMessage } from 'element-plus'
 let currentPage = ref<number>(1) // 当前页
 let pageSize = ref<number>(5) // 每页显示条数
 let total = ref<number>(0) // 总条数
 let brandList = ref<IBrandList>([]) // 品牌列表
 let dialogFormVisible = ref<boolean>(true) // 对话框显示隐藏
-
+let formData = reactive<IBrandItem>({   // 对话框表单数据
+    logoUrl: '',
+    tmName: ''
+})
 
 onMounted(() => {
     GetBrandList()
@@ -107,6 +112,32 @@ const cancel = () => {
 const confirm = () => {
     dialogFormVisible.value = false
 }
+
+// 文件上传前的钩子
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+    if (rawFile.type === 'image/png' || rawFile.type === 'image/jpeg') {
+        if (rawFile.size / 1024 / 1024 < 2) {
+            return true
+        } else {
+            ElMessage.error('上传图片大小不能超过2M')
+            return false
+        }
+    } else {
+        ElMessage.error('请上传png或者jpg格式的图片')
+        return false
+    }
+}
+// 文件上传成功的钩子
+const handleAvatarSuccess: UploadProps['onSuccess'] = (res, file) => {
+    if (res.code === 200) {
+        formData.logoUrl = res.data
+        ElMessage.success('上传成功')
+    } else {
+        ElMessage.error('上传失败')
+    }
+    // this.imageUrl = URL.createObjectURL(file.raw);
+}
+
 
 </script>
 
