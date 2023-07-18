@@ -8,24 +8,61 @@
             </div>
         </template>
         <!-- 卡片身体 -->
-        <el-table border style="width: 100%;margin: 20px 0;">
-            <el-table-column prop="date" label="序号" width="120" align="center" />
-            <el-table-column prop="name" label="品牌名称" />
-            <el-table-column prop="address" label="品牌LOGO" />
-            <el-table-column prop="address" label="品牌操作" />
+        <el-table :data="brandList" border style="width: 100%;margin: 20px 0;">
+            <el-table-column prop="id" label="序号" width="120" align="center" />
+            <el-table-column prop="tmName" label="品牌名称" />
+            <el-table-column prop="address" label="品牌LOGO">
+                <template #default="{ row }">
+                    <img :src="row.logoUrl" style="width: 100px;height: 100px;">
+                </template>
+            </el-table-column>
+            <el-table-column label="品牌操作">
+                <template #default="scope">
+                    <el-button size="default" type="primary" icon="Edit">Edit</el-button>
+                    <el-button size="default" type="danger" icon="Delete">Delete</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <!-- 分页器 -->
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
+        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[5, 10, 15, 20]"
             layout=" prev, pager, next, jumper,->,total, sizes" :total="total" />
     </el-card>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getBrandList } from '@/API/product/brand/index.ts'
 
-let currentPage = ref(1) // 当前页
-let pageSize = ref(10) // 每页显示条数
-let total = ref(100) // 总条数
+let currentPage = ref<number>(1) // 当前页
+let pageSize = ref<number>(5) // 每页显示条数
+let total = ref<number>(0) // 总条数
+let brandList = ref([]) // 品牌列表
+
+
+
+onMounted(() => {
+    GetBrandList()
+})
+
+
+
+
+
+
+// 获取品牌列表的方法
+const GetBrandList = async () => {
+    let res: any = await getBrandList(currentPage.value, pageSize.value)
+    console.log(res);
+    if (res.code === 200) {
+        brandList.value = res.data.records
+        total.value = res.data.total
+    }
+}
+
+
+
+
+
 
 </script>
 
