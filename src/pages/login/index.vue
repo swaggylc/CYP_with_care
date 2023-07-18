@@ -42,19 +42,13 @@ const userStore = useUserStore();
 import { getNowTime } from '@/utils/time.ts';
 
 // 收集表单数据
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref } from 'vue';
 const formData: LoginParamsType = reactive({
     username: 'admin',
-    password: '111111'
+    password: 'atguigu123'
 });
 // 获取表单元素
 let loginForm = ref()
-
-
-onMounted(() => {
-    console.log($route);
-
-})
 
 // 点击登录按钮的回调
 const loginSubmit = async () => {

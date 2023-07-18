@@ -1,25 +1,24 @@
 // 管理用户相关接口
 import request from '@/utils/request'
-import type {
-  LoginParamsType,
-  LoginResultModel,
-  UserInfoResultModel,
-} from './type'
-
-// 枚举接口地址
+// 用户相关接口
 enum API {
-  // 登录
-  LOGIN_URL = '/user/login',
+  // 登录接口
+  LOGIN_URL = '/admin/acl/index/login',
   // 获取用户信息
-  USER_INFO_URL = '/user/info',
+  GET_INFO_URL = '/admin/acl/index/info',
+  // 退出登录
+  LOGOUT_URL = '/admin/acl/index/logout',
 }
 
-// 暴露请求函数
-// 用户登陆的方法
-export const login = (data: LoginParamsType) => {
-  return request.post<any, LoginResultModel>(API.LOGIN_URL, data)
+// 登录方法
+export const login = (data: any) => {
+  return request.post<any, any>(API.LOGIN_URL, data)
 }
 // 获取用户信息的方法
 export const getUserInfo = () => {
-  return request.get<any, UserInfoResultModel>(API.USER_INFO_URL)
+  return request.get<any, any>(API.GET_INFO_URL)
+}
+// 退出登录的方法
+export const logout = () => {
+  return request.post<any, any>(API.LOGOUT_URL)
 }

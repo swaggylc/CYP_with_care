@@ -54,9 +54,9 @@ const fullScreen = () => {
     }
 }
 // 退出登陆的回调
-const logout = () => {
+const logout = async () => {
     // 清空token
-    userStore.logout()
+    await userStore.logout()
     // 跳转到登陆页面
     $router.push({
         path: '/login',
