@@ -3,34 +3,23 @@ export interface LoginParamsType {
   username: string
   password: string
 }
-// 登录接口返回数据的data的ts类型
-interface dataType {
-  token?: string
-  message?: string
-}
-// 登录接口返回数据的ts类型
-export interface LoginResultModel {
+// 全部接口都有的返回值类型
+export interface ResponseType {
   code: number
-  data: dataType
+  message: string
+  ok: boolean
 }
-// 单个用户信息的ts类型
-interface userInfo {
-  userId: number
-  avatar: string
-  username: string
-  password: string
-  desc: string
-  roles: string[]
-  buttons: string[]
-  routes: string[]
-  token: string
+// 登陆接口返回的数据类型
+export interface LoginResponseType extends ResponseType {
+  data: string
 }
-// 获取用户信息接口返回数据data的ts类型
-interface user {
-  checkUser: userInfo
-}
-// 获取用户接口返回数据的ts类型
-export interface UserInfoResultModel {
-  code: number
-  data: user
+// 获取用户信息接口返回的数据类型
+export interface GetUserInfoResponseType extends ResponseType {
+  data: {
+    routes: string[]
+    buttons: string[]
+    roules: string[]
+    name: string
+    avatar: string
+  }
 }

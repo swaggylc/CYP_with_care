@@ -1,5 +1,10 @@
 // 管理用户相关接口
 import request from '@/utils/request'
+import {
+  LoginParamsType,
+  LoginResponseType,
+  GetUserInfoResponseType,
+} from './type.ts'
 // 用户相关接口
 enum API {
   // 登录接口
@@ -11,12 +16,12 @@ enum API {
 }
 
 // 登录方法
-export const login = (data: any) => {
-  return request.post<any, any>(API.LOGIN_URL, data)
+export const login = (data: LoginParamsType) => {
+  return request.post<any, LoginResponseType>(API.LOGIN_URL, data)
 }
 // 获取用户信息的方法
 export const getUserInfo = () => {
-  return request.get<any, any>(API.GET_INFO_URL)
+  return request.get<any, GetUserInfoResponseType>(API.GET_INFO_URL)
 }
 // 退出登录的方法
 export const logout = () => {
