@@ -9,7 +9,7 @@
         </template>
         <!-- 卡片身体 -->
         <el-table :data="brandList" border style="width: 100%;margin: 20px 0;">
-            <el-table-column prop="id" label="序号" width="120" align="center" />
+            <el-table-column label="序号" width="120" align="center" type="index" />
             <el-table-column prop="tmName" label="品牌名称" />
             <el-table-column prop="address" label="品牌LOGO">
                 <template #default="{ row }">
@@ -25,7 +25,8 @@
         </el-table>
         <!-- 分页器 -->
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[5, 10, 15, 20]"
-            layout=" prev, pager, next, jumper,->,total, sizes" :total="total" />
+            layout=" prev, pager, next, jumper,->,total, sizes" :total="total" @current-change="changeCurrent"
+            @size-change="changeSize" />
     </el-card>
 </template>
 
@@ -60,8 +61,19 @@ const GetBrandList = async () => {
     }
 }
 
-
-
+// 点击页码的回调
+const changeCurrent = (val: number) => {
+    currentPage.value = val
+    // 重新获取品牌列表
+    GetBrandList()
+}
+// 点击每页显示条数的回调
+const changeSize = (val: number) => {
+    pageSize.value = val
+    currentPage.value = 1
+    // 重新获取品牌列表
+    GetBrandList()
+}
 
 
 
