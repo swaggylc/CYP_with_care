@@ -2,9 +2,12 @@
 import { defineStore } from 'pinia'
 // 引入请求方法
 import { getTypeOne } from '@/API/product/attr/index.ts'
+// 引入ts类型
+import type { ITypeRes } from '@/API/product/attr/type.ts'
+import type { TypeState } from '../type/type'
 
 let useTypeStore = defineStore('Type', {
-  state: () => {
+  state: (): TypeState => {
     return {
       ArrTypeOne: [],
       ArrTypeTwo: [],
@@ -16,7 +19,7 @@ let useTypeStore = defineStore('Type', {
   },
   actions: {
     async getOneTypes() {
-      let res: any = await getTypeOne()
+      let res: ITypeRes = await getTypeOne()
       if (res.code == 200) {
         this.ArrTypeOne = res.data
       }
