@@ -30,11 +30,11 @@
     </el-card>
     <!-- 对话框 -->
     <el-dialog v-model="dialogFormVisible" :title="formData.id ? '修改品牌' : '添加品牌'">
-        <el-form style="width: 70%;">
-            <el-form-item label="品牌名称" label-width="80px">
+        <el-form ref="form" style="width: 70%;" :model="formData" :rules="rules">
+            <el-form-item label="品牌名称" label-width="80px" prop="tmName">
                 <el-input placeholder="请输入品牌名称" v-model="formData.tmName"></el-input>
             </el-form-item>
-            <el-form-item label="品牌logo" label-width="80px">
+            <el-form-item label="品牌logo" label-width="80px" prop="logoUrl">
                 <el-upload class="avatar-uploader" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload"
                     :show-file-list="false" action="/api/admin/product/fileUpload">
                     <img v-if="formData.logoUrl" :src="formData.logoUrl" class="avatar" />
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import { getBrandList, addOrUpdateBrand } from '@/API/product/brand/index.ts'
 import type { IBrandListRes, IBrandList, IBrandItem } from '@/API/product/brand/type.ts'
 import type { UploadProps } from 'element-plus'
@@ -66,6 +66,7 @@ let formData = reactive<IBrandItem>({   // 对话框表单数据
     logoUrl: '',
     tmName: ''
 })
+let form = ref<any>() // 获取表单实例
 
 onMounted(() => {
     GetBrandList()
@@ -91,19 +92,28 @@ const changeSize = (val: number) => {
 }
 // 点击添加品牌按钮的回调
 const addBrand = () => {
+    dialogFormVisible.value = true
     // 重置表单数据
     formData.logoUrl = ''
     formData.tmName = ''
     if (formData.id) {
         delete formData.id
     }
-    dialogFormVisible.value = true
+    // 重置表单校验结果
+    // 第一种方法：ts的问号语法
+    // form.value?.clearValidate()
+    // 第二种方法：使用nextTick
+    nextTick(() => {
+        form.value.clearValidate()
+    })
 }
 // 点击修改品牌按钮的回调
 const editBrand = (data: any) => {
     dialogFormVisible.value = true
     // 将数据回显
     Object.assign(formData, data)
+    // 重置表单校验结果
+    form.value?.clearValidate()
 }
 // 点击取消按钮的回调
 const cancel = () => {
@@ -111,6 +121,8 @@ const cancel = () => {
 }
 // 点击确定按钮的回调
 const confirm = async () => {
+    // 表单校验
+    await form.value.validate()
     dialogFormVisible.value = false
     let res: any = await addOrUpdateBrand(formData)
     if (res.code === 200) {
@@ -145,11 +157,44 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (res, file) => {
     if (res.code === 200) {
         formData.logoUrl = res.data
         ElMessage.success('上传成功')
+        // 清除校验结果
+        form.value.clearValidate('logoUrl')
     } else {
         ElMessage.error('上传失败')
     }
-    // this.imageUrl = URL.createObjectURL(file.raw);
 }
+
+// 品牌名称的自定义校验规则
+const validatorTmName = (rule: any, value: string, callback: any) => {
+    if (value.length < 2 || value.length > 10) {
+        callback(new Error('品牌名称长度在2-10之间'))
+    } else {
+        callback()
+    }
+}
+// 品牌logo的自定义校验规则
+const validatorLogoUrl = (rule: any, value: string, callback: any) => {
+    if (!value) {
+        callback(new Error('品牌logo不能为空'))
+    } else {
+        callback()
+    }
+}
+
+// 自定义校验规则
+const rules = {
+    tmName: [
+        { required: true, trigger: 'change', validator: validatorTmName },
+    ],
+    logoUrl: [
+        { required: true, validator: validatorLogoUrl }
+    ]
+}
+
+
+
+
+
 
 
 </script>
