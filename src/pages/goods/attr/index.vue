@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, ref } from 'vue';
+import { watch, ref, reactive } from 'vue';
 import { getAttr } from '@/API/product/attr/index.ts'
 // 引入ts类型
 import type { IAttrRes, IAttr } from '@/API/product/attr/type.ts'
@@ -60,9 +60,16 @@ let typeStore = useTypeStore();
 
 
 let Attrarr = ref<IAttr[]>([])
-
 let scene = ref<number>(0)    // 0 代表展示属性列表  1 代表添加属性
-
+// 收集添加属性的数据
+let addAttrData = reactive<IAttr>({
+    attrName: '',   // 属性名称
+    attrValueList: [],  // 属性值列表
+    categoryId: '', // 三级分类id
+    categoryLevel: 3,   // 分类级别
+    createTime: null,
+    updateTime: null
+})
 
 // 监听三级分类选中值的变化
 watch(() => typeStore.ThreeId, () => {

@@ -25,9 +25,9 @@ export interface ITypeRes extends IResponse {
 
 // 属性值对象的ts类型
 export interface IAttrValue {
-  id: number
+  id?: number
   valueName: string
-  attrId: number | string
+  attrId?: number | string
   createTime: null
   updateTime: null
 }
@@ -36,11 +36,11 @@ export type IAttrValueArr = IAttrValue[]
 
 // 属性对象的ts类型
 export interface IAttr {
-  id: number
+  id?: number
   createTime: null
   updateTime: null
   attrName: string
-  categoryId: number
+  categoryId: number|string
   categoryLevel: number
   attrValueList: IAttrValueArr
 }
