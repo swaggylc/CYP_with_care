@@ -2,19 +2,19 @@
     <el-card>
         <el-form inline>
             <el-form-item label="一级分类">
-                <el-select v-model="typeStore.OneId" @change="changeOne">
+                <el-select v-model="typeStore.OneId" @change="changeOne" :disabled="scene == 1">
                     <el-option v-for="item in typeStore.ArrTypeOne" :key="item.id" :label="item.name"
                         :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="二级分类">
-                <el-select v-model="typeStore.TwoId" @change="changeTwo">
+                <el-select v-model="typeStore.TwoId" @change="changeTwo" :disabled="scene == 1">
                     <el-option v-for="item in typeStore.ArrTypeTwo" :key="item.id" :label="item.name"
                         :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="三级分类">
-                <el-select v-model="typeStore.ThreeId">
+                <el-select v-model="typeStore.ThreeId" :disabled="scene == 1">
                     <el-option v-for="item in typeStore.ArrTypeThree" :key="item.id" :label="item.name"
                         :value="item.id"></el-option>
                 </el-select>
@@ -35,6 +35,8 @@ import type { IAttrRes, IAttr } from '@/API/product/attr/types.ts'
 //@ts-ignore
 import useTypeStore from '@/store/modules/type.ts';
 let typeStore = useTypeStore();
+
+defineProps(['scene'])
 
 
 onMounted(() => {

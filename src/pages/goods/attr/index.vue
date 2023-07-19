@@ -1,30 +1,51 @@
 <template>
-    <Type />
-    <el-card style="margin: 20px 0;">
-        <template #header>
-            <div class="card-header">
-                <span>Property management</span>
-                <el-button class="button" type="primary" icon="Plus" :disabled="typeStore.ThreeId == ''">添加属性</el-button>
-            </div>
-        </template>
-        <el-table stripe style="width: 100%" border :data="Attrarr">
-            <el-table-column label="序号" width="80" type="index" align="center" />
-            <el-table-column prop="attrName" label="属性名称" width="180" />
-            <el-table-column prop="address" label="属性值名称">
-                <template #default="{ row }">
-                    <el-tag style="margin: 5px;" v-for="item in row.attrValueList" :key="item.id" disable-transitions>
-                        {{ item.valueName }}
-                    </el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" width="200">
-                <template #default="{ row }">
-                    <el-button type="primary" size="mini" icon="Edit"></el-button>
-                    <el-button type="danger" size="mini" icon="Delete"></el-button>
-                </template>
-            </el-table-column>>
-        </el-table>
-    </el-card>
+    <Type :scene="scene" />
+    <div v-show="scene == 0">
+        <el-card style="margin: 20px 0;">
+            <template #header>
+                <div class="card-header">
+                    <span>Property management</span>
+                    <el-button class="button" type="primary" icon="Plus" :disabled="typeStore.ThreeId == ''"
+                        @click="addAttr">添加属性</el-button>
+                </div>
+            </template>
+            <el-table stripe style="width: 100%" border :data="Attrarr">
+                <el-table-column label="序号" width="80" type="index" align="center" />
+                <el-table-column prop="attrName" label="属性名称" width="180" />
+                <el-table-column prop="address" label="属性值名称">
+                    <template #default="{ row }">
+                        <el-tag style="margin: 5px;" v-for="item in row.attrValueList" :key="item.id" disable-transitions>
+                            {{ item.valueName }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="200">
+                    <template #default="{ row }">
+                        <el-button type="primary" size="mini" icon="Edit" @click="Edit"></el-button>
+                        <el-button type="danger" size="mini" icon="Delete"></el-button>
+                    </template>
+                </el-table-column>>
+            </el-table>
+        </el-card>
+    </div>
+    <div v-show="scene == 1">
+        <el-card style="margin: 20px 0;">
+            <el-form inline>
+                <el-form-item label="属性名称">
+                    <el-input placeholder="请输入属性名称"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-button type="primary" icon="Plus">添加属性值</el-button>
+            <el-button type="primary">取消</el-button>
+            <el-table border style="margin: 20px 0; ">
+                <el-table-column label="序号" width="80" type="index"></el-table-column>
+                <el-table-column label="属性值"></el-table-column>
+                <el-table-column label="操作" width="200"></el-table-column>
+            </el-table>
+            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="cancel">取消</el-button>
+        </el-card>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -40,7 +61,7 @@ let typeStore = useTypeStore();
 
 let Attrarr = ref<IAttr[]>([])
 
-
+let scene = ref<number>(0)    // 0 代表展示属性列表  1 代表添加属性
 
 
 // 监听三级分类选中值的变化
@@ -64,10 +85,19 @@ const getAttrRes = async () => {
     }
 }
 
+// 添加属性按钮的回调
+const addAttr = () => {
+    scene.value = 1
+}
+// 点击修改按钮的回调
+const Edit = () => {
+    scene.value = 1
+}
 
-
-
-
+// 取消按钮的回调
+const cancel = () => {
+    scene.value = 0
+}
 
 
 </script>
