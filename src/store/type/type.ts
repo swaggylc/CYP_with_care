@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 // 引入ts类型
-import { IType } from '@/API/product/attr/type.ts'
+import { IType, IAttr } from '@/API/product/attr/type.ts'
 
 // 定义小仓库数据state类型
 export interface UserState {

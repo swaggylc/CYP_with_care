@@ -14,7 +14,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="三级分类">
-                <el-select v-model="typeStore.ThreeId" @change="changeThree">
+                <el-select v-model="typeStore.ThreeId">
                     <el-option v-for="item in typeStore.ArrTypeThree" :key="item.id" :label="item.name"
                         :value="item.id"></el-option>
                 </el-select>
@@ -24,13 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, watch, ref } from 'vue';
+//@ts-ignore
+import { getAttr } from '@/API/product/attr/index.ts'
+// 引入ts类型
+//@ts-ignore
+import type { IAttrRes, IAttr } from '@/API/product/attr/types.ts'
 
 // 引入type仓库
 //@ts-ignore
 import useTypeStore from '@/store/modules/type.ts';
 let typeStore = useTypeStore();
-
 
 
 onMounted(() => {
@@ -54,10 +58,7 @@ const changeTwo = (val: number) => {
     // 清空三级分类数据
     typeStore.ThreeId = '';
 }
-// 第三级分类选中值的回调
-const changeThree = () => {
 
-}
 
 
 

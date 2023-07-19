@@ -20,3 +20,31 @@ export interface IType {
 export interface ITypeRes extends IResponse {
   data: IType[]
 }
+
+// 属性与属性值的ts类型
+
+// 属性值对象的ts类型
+export interface IAttrValue {
+  id: number
+  valueName: string
+  attrId: number | string
+  createTime: null
+  updateTime: null
+}
+// 存储属性值的数组的ts类型
+export type IAttrValueArr = IAttrValue[]
+
+// 属性对象的ts类型
+export interface IAttr {
+  id: number
+  createTime: null
+  updateTime: null
+  attrName: string
+  categoryId: number
+  categoryLevel: number
+  attrValueList: IAttrValueArr
+}
+// 获取已有属性及属性值接口返回的ts类型
+export interface IAttrRes extends IResponse {
+  data: IAttr[]
+}
