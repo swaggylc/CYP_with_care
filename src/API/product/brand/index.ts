@@ -8,6 +8,8 @@ enum API {
   ADD_BRAND_URL = '/admin/product/baseTrademark/save',
   // 修改品牌的接口
   UPDATE_BRAND_URL = '/admin/product/baseTrademark/update',
+  // 删除品牌的接口
+  DELETE_BRAND_URL = '/admin/product/baseTrademark/remove/',
 }
 
 // 获取品牌列表的方法
@@ -23,4 +25,8 @@ export const addOrUpdateBrand = (data: IBrandItem) => {
   } else {
     return request.post<any, any>(API.ADD_BRAND_URL, data)
   }
+}
+// 删除品牌的方法
+export const deleteBrand = (id: number) => {
+  return request.delete<any, any>(API.DELETE_BRAND_URL + id)
 }

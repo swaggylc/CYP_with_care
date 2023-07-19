@@ -19,7 +19,11 @@
             <el-table-column label="品牌操作">
                 <template #default="{ row }">
                     <el-button size="default" type="primary" icon="Edit" @click="editBrand(row)">Edit</el-button>
-                    <el-button size="default" type="danger" icon="Delete">Delete</el-button>
+                    <el-popconfirm title="确定删除该品牌吗?" width="200" @confirm="DeleteBrand(row)">
+                        <template #reference>
+                            <el-button size="default" type="danger" icon="Delete">Delete</el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -53,7 +57,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
-import { getBrandList, addOrUpdateBrand } from '@/API/product/brand/index.ts'
+import { getBrandList, addOrUpdateBrand, deleteBrand } from '@/API/product/brand/index.ts'
 import type { IBrandListRes, IBrandList, IBrandItem } from '@/API/product/brand/type.ts'
 import type { UploadProps } from 'element-plus'
 import { ElMessage } from 'element-plus'
@@ -191,7 +195,17 @@ const rules = {
     ]
 }
 
-
+// 删除品牌的回调
+const DeleteBrand = async (row: any) => {
+    let res: any = await deleteBrand(row.id)
+    if (res.code === 200) {
+        ElMessage.success('删除成功')
+        // 重新获取品牌列表
+        GetBrandList(brandList.value.length > 1 ? currentPage.value : currentPage.value - 1)
+    } else {
+        ElMessage.error(res.data || '删除失败')
+    }
+}
 
 
 
