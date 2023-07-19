@@ -16,17 +16,9 @@ export const getTypeOne = () => {
 }
 // 获取二级分类数据的方法
 export const getTypeTwo = (category1Id: string | number) => {
-  return request.get<any, ITypeRes>(API.GETTYPETWO_URL, {
-    params: {
-      category1Id,
-    },
-  })
+  return request.get<any, ITypeRes>(API.GETTYPETWO_URL + `/${category1Id}`)
 }
 // 获取三级分类数据的方法
 export const getTypeThree = (category2Id: string | number) => {
-  return request.get<any, ITypeRes>(API.GETTYPETHREE_URL, {
-    params: {
-      category2Id,
-    },
-  })
+  return request.get<any, ITypeRes>(API.GETTYPETHREE_URL + `/${category2Id}`)
 }

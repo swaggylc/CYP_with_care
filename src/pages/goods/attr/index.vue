@@ -4,7 +4,7 @@
         <template #header>
             <div class="card-header">
                 <span>Property management</span>
-                <el-button class="button" type="primary" icon="Plus">添加属性</el-button>
+                <el-button class="button" type="primary" icon="Plus" :disabled="typeStore.ThreeId == ''">添加属性</el-button>
             </div>
         </template>
         <el-table stripe style="width: 100%" border>
@@ -17,7 +17,10 @@
 </template>
 
 <script setup lang="ts">
-
+// 引入type仓库
+//@ts-ignore
+import useTypeStore from '@/store/modules/type.ts';
+let typeStore = useTypeStore();
 </script>
 
 <style scoped lang="scss">

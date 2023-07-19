@@ -2,23 +2,21 @@
     <el-card>
         <el-form inline>
             <el-form-item label="一级分类">
-                <el-select v-model="typeStore.OneId">
+                <el-select v-model="typeStore.OneId" @change="changeOne">
                     <el-option v-for="item in typeStore.ArrTypeOne" :key="item.id" :label="item.name"
                         :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="二级分类">
-                <el-select>
-                    <el-option label="通信"></el-option>
-                    <el-option label="家电"></el-option>
-                    <el-option label="电脑"></el-option>
+                <el-select v-model="typeStore.TwoId" @change="changeTwo">
+                    <el-option v-for="item in typeStore.ArrTypeTwo" :key="item.id" :label="item.name"
+                        :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="三级分类">
-                <el-select>
-                    <el-option label="通信"></el-option>
-                    <el-option label="家电"></el-option>
-                    <el-option label="电脑"></el-option>
+                <el-select v-model="typeStore.ThreeId" @change="changeThree">
+                    <el-option v-for="item in typeStore.ArrTypeThree" :key="item.id" :label="item.name"
+                        :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
         </el-form>
@@ -40,9 +38,26 @@ onMounted(() => {
     typeStore.getOneTypes();
 })
 
+// 第一级分类选中值的回调
+const changeOne = (val: number) => {
+    // 通知仓库发送请求获取二级分类数据
+    typeStore.getTwoTypes(val);
+    // 清空二、三级分类数据
+    typeStore.TwoId = '';
+    typeStore.ThreeId = '';
+    typeStore.ArrTypeThree = [];
+}
+// 第二级分类选中值的回调
+const changeTwo = (val: number) => {
+    // 通知仓库发送请求获取三级分类数据
+    typeStore.getThreeTypes(val);
+    // 清空三级分类数据
+    typeStore.ThreeId = '';
+}
+// 第三级分类选中值的回调
+const changeThree = () => {
 
-
-
+}
 
 
 
