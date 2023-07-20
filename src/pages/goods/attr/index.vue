@@ -44,11 +44,16 @@
                     <!-- row即为当前push进来的属性值对象 -->
                     <template #default="{ row, $index }">
                         <el-input v-if="!row.flag" @blur="lossFocus(row, $index)" placeholder="请输入属性值"
-                            v-model="row.valueName"></el-input>
-                        <div v-else style="width: 100%;" @click="getFocus(row)">{{ row.valueName }}</div>
+                            v-model="row.valueName" :ref="(element: any) => inputArr[$index] = element"></el-input>
+                        <div v-else style="width: 100%;" @click="getFocus(row, $index)">{{ row.valueName }}</div>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="200"></el-table-column>
+                <el-table-column label="操作" width="200">
+                    <template #default="{ row, $index }">
+                        <el-button type="danger" icon="Delete" 
+                            @click="($index: number) => addAttrData.attrValueList.splice($index, 1)">Delete</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <el-button type="primary" @click="save">保存</el-button>
             <el-button type="primary" @click="cancel">取消</el-button>
@@ -57,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, reactive } from 'vue';
+import { watch, ref, reactive, nextTick } from 'vue';
 import { getAttr, postAttr } from '@/API/product/attr/index.ts'
 // 引入ts类型
 import type { IAttrRes, IAttr, IAttrValue } from '@/API/product/attr/type.ts'
@@ -67,7 +72,7 @@ import useTypeStore from '@/store/modules/type.ts';
 import { ElMessage } from 'element-plus';
 let typeStore = useTypeStore();
 
-
+let inputArr = ref<any[]>([])     //存放input实例
 let Attrarr = ref<IAttr[]>([])
 let scene = ref<number>(0)    // 0 代表展示属性列表  1 代表添加属性
 // 收集添加属性的数据
@@ -138,7 +143,10 @@ const addAttrValue = () => {
         updateTime: null,
         flag: false
     })
-
+    // 让最后一个input获取焦点
+    nextTick(() => {
+        inputArr.value[inputArr.value.length - 1].focus()
+    })
 }
 
 // 点击保存按钮的回调
@@ -152,7 +160,7 @@ const save = async () => {
     // 收集参数，发送请求
     let res: any = await postAttr(addAttrData)
     console.log(res);
-    
+
     if (res.code === 200) {
         scene.value = 0
         ElMessage.success(addAttrData.id ? '修改成功' : '添加成功')
@@ -184,8 +192,21 @@ const lossFocus = (row: IAttrValue, index: number) => {
 }
 
 // div获取焦点的回调
-const getFocus = (row: IAttrValue) => {
+const getFocus = (row: IAttrValue, index: number) => {
+    // 修改flag的值,让input显示
     row.flag = false
+
+    // 让当前input获取焦点,需要等待dom渲染完成
+    nextTick(() => {
+        inputArr.value[index].focus()
+    })
+
+
+
+
+
+
+
 }
 
 
