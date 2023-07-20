@@ -13,6 +13,8 @@ enum API {
   GETATTR_URL = '/admin/product/attrInfoList',
   // 添加或修改已有属性的接口
   POSTATTR_URL = '/admin/product/saveAttrInfo',
+  // 删除已有属性的接口
+  DELETEATTR_URL = '/admin/product/deleteAttr',
 }
 // 获取一级分类数据的方法
 export const getTypeOne = () => {
@@ -40,4 +42,9 @@ export const getAttr = (
 // 添加或修改已有属性的方法
 export const postAttr = (data: IAttr) => {
   return request.post<any, any>(API.POSTATTR_URL, data)
+}
+
+// 删除已有属性的方法
+export const deleteAttr = (attrId: string | number) => {
+  return request.delete<any, any>(API.DELETEATTR_URL + `/${attrId}`)
 }

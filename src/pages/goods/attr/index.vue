@@ -22,7 +22,11 @@
                 <el-table-column label="操作" width="200">
                     <template #default="{ row }">
                         <el-button type="primary" size="mini" icon="Edit" @click="Edit(row)"></el-button>
-                        <el-button type="danger" size="mini" icon="Delete"></el-button>
+                        <el-popconfirm :title="`确定删除${row.attrName}属性吗?`" width="200" @confirm="DeleteAttr(row)">
+                            <template #reference>
+                                <el-button type="danger" size="mini" icon="Delete"></el-button>
+                            </template>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>>
             </el-table>
@@ -59,11 +63,15 @@
             <el-button type="primary" @click="cancel">取消</el-button>
         </el-card>
     </div>
+    <!-- 空数据展示 -->
+    <div v-show="typeStore.ThreeId == ''">
+        <el-empty description="暂无数据"></el-empty>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { watch, ref, reactive, nextTick } from 'vue';
-import { getAttr, postAttr } from '@/API/product/attr/index.ts'
+import { watch, ref, reactive, nextTick, onBeforeUnmount } from 'vue';
+import { getAttr, postAttr, deleteAttr } from '@/API/product/attr/index.ts'
 // 引入ts类型
 import type { IAttrRes, IAttr, IAttrValue } from '@/API/product/attr/type.ts'
 // 引入type仓库
@@ -126,7 +134,7 @@ const addAttr = () => {
 }
 
 // 点击修改按钮的回调
-const Edit = (row: any) => {
+const Edit = (row: IAttr) => {
     // 切换场景
     scene.value = 1
     // console.log(row);
@@ -218,8 +226,23 @@ const getFocus = (row: IAttrValue, index: number) => {
     })
 }
 
+// 点击删除按钮弹出气泡框后确认的回调
+const DeleteAttr = async (row: IAttr) => {
+    let res: any = await deleteAttr(row.id as number)
+    if (res.code === 200) {
+        ElMessage.success('删除成功')
+        // 重新获取属性数据
+        getAttrRes()
+    } else {
+        ElMessage.error('删除失败')
+    }
+}
 
-
+// 路由组件销毁前的回调
+onBeforeUnmount(() => {
+    // 重置仓库中的数据
+    typeStore.$reset()
+})
 
 
 
