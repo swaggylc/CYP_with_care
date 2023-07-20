@@ -21,7 +21,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="200">
                     <template #default="{ row }">
-                        <el-button type="primary" size="mini" icon="Edit" @click="Edit"></el-button>
+                        <el-button type="primary" size="mini" icon="Edit" @click="Edit(row)"></el-button>
                         <el-button type="danger" size="mini" icon="Delete"></el-button>
                     </template>
                 </el-table-column>>
@@ -50,7 +50,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="200">
                     <template #default="{ row, $index }">
-                        <el-button type="danger" icon="Delete" 
+                        <el-button type="danger" icon="Delete"
                             @click="($index: number) => addAttrData.attrValueList.splice($index, 1)">Delete</el-button>
                     </template>
                 </el-table-column>
@@ -126,8 +126,24 @@ const addAttr = () => {
 }
 
 // 点击修改按钮的回调
-const Edit = () => {
+const Edit = (row: any) => {
+    // 切换场景
     scene.value = 1
+    // console.log(row);
+    // 将row中的数据深拷贝一份，再合并
+    let obj = JSON.parse(JSON.stringify(row))
+
+    // 合并对象，回显数据，在此之前需要深拷贝，否则会修改原数据
+    Object.assign(addAttrData, obj)
+    // 默认让第一个input获取焦点
+    nextTick(() => {
+        inputArr.value[0].focus()
+    })
+
+
+
+
+
 }
 
 // 取消按钮的回调
@@ -200,13 +216,6 @@ const getFocus = (row: IAttrValue, index: number) => {
     nextTick(() => {
         inputArr.value[index].focus()
     })
-
-
-
-
-
-
-
 }
 
 
