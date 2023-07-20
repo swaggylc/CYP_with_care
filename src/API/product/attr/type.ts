@@ -30,6 +30,7 @@ export interface IAttrValue {
   attrId?: number | string
   createTime: null
   updateTime: null
+  flag?: boolean
 }
 // 存储属性值的数组的ts类型
 export type IAttrValueArr = IAttrValue[]

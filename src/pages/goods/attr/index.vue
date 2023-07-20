@@ -42,8 +42,10 @@
                 <el-table-column label="序号" width="80" type="index"></el-table-column>
                 <el-table-column label="属性值">
                     <!-- row即为当前push进来的属性值对象 -->
-                    <template #default="{ row }">
-                        <el-input placeholder="请输入属性值" v-model="row.valueName"></el-input>
+                    <template #default="{ row, $index }">
+                        <el-input v-if="!row.flag" @blur="lossFocus(row, $index)" placeholder="请输入属性值"
+                            v-model="row.valueName"></el-input>
+                        <div v-else style="width: 100%;" @click="getFocus(row)">{{ row.valueName }}</div>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" width="200"></el-table-column>
@@ -58,7 +60,7 @@
 import { watch, ref, reactive } from 'vue';
 import { getAttr, postAttr } from '@/API/product/attr/index.ts'
 // 引入ts类型
-import type { IAttrRes, IAttr } from '@/API/product/attr/type.ts'
+import type { IAttrRes, IAttr, IAttrValue } from '@/API/product/attr/type.ts'
 // 引入type仓库
 //@ts-ignore
 import useTypeStore from '@/store/modules/type.ts';
@@ -116,10 +118,8 @@ const addAttr = () => {
     if (addAttrData.id) {
         delete addAttrData.id
     }
-
-
-
 }
+
 // 点击修改按钮的回调
 const Edit = () => {
     scene.value = 1
@@ -135,14 +135,24 @@ const addAttrValue = () => {
     addAttrData.attrValueList.push({
         valueName: '',
         createTime: null,
-        updateTime: null
+        updateTime: null,
+        flag: false
     })
+
 }
 
 // 点击保存按钮的回调
 const save = async () => {
+    // 判断属性名称是否为空，及属性值是否为空
+    if (addAttrData.attrName.trim() == '' || addAttrData.attrValueList.length == 0) {
+        ElMessage.error(addAttrData.attrName.trim() == '' ? '属性名称不能为空' : '属性值不能为空')
+        return
+    }
+
     // 收集参数，发送请求
     let res: any = await postAttr(addAttrData)
+    console.log(res);
+    
     if (res.code === 200) {
         scene.value = 0
         ElMessage.success(addAttrData.id ? '修改成功' : '添加成功')
@@ -153,11 +163,30 @@ const save = async () => {
     }
 }
 
+// 输入框失去焦点的回调
+const lossFocus = (row: IAttrValue, index: number) => {
+    if (row.valueName.trim() == '') {
+        // 删除当前对象
+        addAttrData.attrValueList.splice(index, 1)
+        ElMessage.error('属性值不能为空')
+        return
+    }
+    // 判断当前属性值是否已经存在
+    let flag = addAttrData.attrValueList.filter(item => item.valueName === row.valueName)
+    if (flag.length > 1) {
+        ElMessage.error('属性值已经存在')
+        // 删除当前对象
+        addAttrData.attrValueList.splice(index, 1)
+        return
+    }
 
+    row.flag = true
+}
 
-
-
-
+// div获取焦点的回调
+const getFocus = (row: IAttrValue) => {
+    row.flag = false
+}
 
 
 
