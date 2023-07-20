@@ -1,42 +1,81 @@
 <template>
-    <div>
+    <div class="spu">
         <!-- 三级分类组件 -->
         <Type :scene="scene" />
         <el-card style="margin: 20px 0;">
             <template #header>
                 <div class="card-header">
                     <span>SPU management</span>
-                    <el-button class="button" type="primary" icon="Plus">添加spu</el-button>
+                    <el-button class="button" type="primary" icon="Plus"
+                        :disabled="typeStore.ThreeId == ''">添加spu</el-button>
                 </div>
             </template>
             <!-- 表格部分 -->
-            <el-table border style="margin: 20px 0;">
+            <el-table border style="margin: 20px 0;" :data="spuList">
                 <el-table-column label="序号" type="index" align="center" width="100" />
-                <el-table-column label="SPU名称" width="250" />
-                <el-table-column label="SPU描述" />
-                <el-table-column label="操作" width="300" />
+                <el-table-column label="SPU名称" width="250" prop="spuName" />
+                <el-table-column label="SPU描述" porp="description" show-overflow-tooltip />
+                <el-table-column label="操作" width="300" class-name="action">
+                    <template #default="{ row, $index }">
+                        <el-button icon="Plus" type="primary" title="添加SKU"></el-button>
+                        <el-button icon="Edit" type="primary" plain title="修改SPU"></el-button>
+                        <el-button icon="CollectionTag" type="info" title="查看SKU列表"></el-button>
+                        <el-button icon="Delete" type="danger" title="删除SPU"></el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <!-- 分页器 -->
-            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[5, 7, 9, 11]"
-                layout=" prev, pager, next, jumper,->,total, sizes" :total="40" />
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[5, 10, 15, 20]"
+                layout=" prev, pager, next, jumper,->,total, sizes" :total="total" @current-change="GetSpuList"
+                @size-change="changeSize" />
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
+// 引入分类仓库
+import useTypeStore from '@/store/modules/type.ts'
+let typeStore = useTypeStore()
+// 引入请求方法
+import { getSPUList } from '@/API/product/spu/index.ts'
+// 引入ts类型
+import { IGetSPUListResType, ISpuListType, ISpuType } from '@/API/product/spu/type.ts'
+import { ElMessage } from 'element-plus';
 
 let scene = ref<number>(0)
 let currentPage = ref<number>(1)    // 当前页
-let pageSize = ref<number>(5)   // 每页显示条数
+let pageSize = ref<number>(10)   // 每页显示条数
+let total = ref<number>(0)  // 总条数
+let spuList = ref<ISpuListType>([])  // spu列表数据
 
 
+// 监听三级分类Id的变化
+watch(() => typeStore.ThreeId, (newVal) => {
+    // 保证三级分类Id有值才能发送请求
+    if (newVal) {
+        GetSpuList()
+    }
+})
 
 
-
-
-
+// 获取spu列表数据的方法
+const GetSpuList = async (pager: number = 1) => {
+    currentPage.value = pager
+    let res: IGetSPUListResType = await getSPUList(currentPage.value, pageSize.value, typeStore.ThreeId)
+    if (res.code === 200) {
+        spuList.value = res.data.records
+        total.value = res.data.total
+    } else {
+        ElMessage.error('获取数据失败！')
+    }
+}
+// 每页显示条数改变的回调
+const changeSize = (val: number) => {
+    pageSize.value = val
+    GetSpuList()
+}
 
 
 
@@ -56,9 +95,17 @@ let pageSize = ref<number>(5)   // 每页显示条数
 </script>
 
 <style scoped lang="scss">
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.spu {
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .action {
+        button {
+            margin: 0 11px;
+        }
+    }
 }
 </style>
