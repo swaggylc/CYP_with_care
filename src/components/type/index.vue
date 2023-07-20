@@ -24,12 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, ref } from 'vue';
-//@ts-ignore
-import { getAttr } from '@/API/product/attr/index.ts'
-// 引入ts类型
-//@ts-ignore
-import type { IAttrRes, IAttr } from '@/API/product/attr/types.ts'
+import { onMounted } from 'vue';
 
 // 引入type仓库
 //@ts-ignore
