@@ -6,15 +6,15 @@ enum API {
   // 获取一级分类数据
   GETTYPEONE_URL = '/admin/product/getCategory1',
   // 获取二级分类数据
-  GETTYPETWO_URL = '/admin/product/getCategory2',
+  GETTYPETWO_URL = '/admin/product/getCategory2/',
   // 获取三级分类数据
-  GETTYPETHREE_URL = '/admin/product/getCategory3',
+  GETTYPETHREE_URL = '/admin/product/getCategory3/',
   // 获取属性数据
-  GETATTR_URL = '/admin/product/attrInfoList',
+  GETATTR_URL = '/admin/product/attrInfoList/',
   // 添加或修改已有属性的接口
-  POSTATTR_URL = '/admin/product/saveAttrInfo',
+  POSTATTR_URL = '/admin/product/saveAttrInfo/',
   // 删除已有属性的接口
-  DELETEATTR_URL = '/admin/product/deleteAttr',
+  DELETEATTR_URL = '/admin/product/deleteAttr/',
 }
 // 获取一级分类数据的方法
 export const getTypeOne = () => {
@@ -22,11 +22,11 @@ export const getTypeOne = () => {
 }
 // 获取二级分类数据的方法
 export const getTypeTwo = (category1Id: string | number) => {
-  return request.get<any, ITypeRes>(API.GETTYPETWO_URL + `/${category1Id}`)
+  return request.get<any, ITypeRes>(API.GETTYPETWO_URL + `${category1Id}`)
 }
 // 获取三级分类数据的方法
 export const getTypeThree = (category2Id: string | number) => {
-  return request.get<any, ITypeRes>(API.GETTYPETHREE_URL + `/${category2Id}`)
+  return request.get<any, ITypeRes>(API.GETTYPETHREE_URL + `${category2Id}`)
 }
 // 获取属性数据的方法
 export const getAttr = (
@@ -35,7 +35,7 @@ export const getAttr = (
   category3Id: string | number,
 ) => {
   return request.get<any, IAttrRes>(
-    API.GETATTR_URL + `/${category1Id}/${category2Id}/${category3Id}`,
+    API.GETATTR_URL + `${category1Id}/${category2Id}/${category3Id}`,
   )
 }
 
@@ -46,5 +46,5 @@ export const postAttr = (data: IAttr) => {
 
 // 删除已有属性的方法
 export const deleteAttr = (attrId: string | number) => {
-  return request.delete<any, any>(API.DELETEATTR_URL + `/${attrId}`)
+  return request.delete<any, any>(API.DELETEATTR_URL + `${attrId}`)
 }
