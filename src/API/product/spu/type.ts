@@ -10,13 +10,13 @@ export interface ISpuType {
   id?: number
   spuName: string
   description: string
-  category3Id: number
-  tmId: number
-  spuSaleAttrList: null
-  spuImageList: null
-  createTime: string
-  updateTime: string
-  spuPosterList: null
+  category3Id: number | string
+  tmId: number | string
+  spuSaleAttrList: null | ISpuSaleAttrType[]
+  spuImageList: null | ISpuImageType[]
+  createTime?: string
+  updateTime?: string
+  spuPosterList?: null
 }
 // 多个SPU组成数组的ts数据类型
 export type ISpuListType = ISpuType[]
@@ -58,12 +58,12 @@ export interface IGetSPUBrandListResType extends IProductSpuType {
 
 // spu图片列表单个图片的ts数据类型
 export interface ISpuImageType {
-  id: number
+  id?: number
   imgName: string
   imgUrl: string
-  spuId: number
-  createTime: string
-  updateTime: string
+  spuId?: number
+  createTime?: string
+  updateTime?: string
 }
 // spu图片列表多个图片组成数组的ts数据类型
 export type ISpuImageListType = ISpuImageType[]
@@ -75,22 +75,22 @@ export interface IGetSPUImageListResType extends IProductSpuType {
 // spu销售属性列表单个销售属性的属性值的ts数据类型
 export interface ISpuSaleAttrValue {
   id?: number
-  createTime: string
-  updateTime: string
-  spuId: number
+  createTime?: string
+  updateTime?: string
+  spuId?: number
   baseSaleAttrId: number
   saleAttrValueName: string
-  saleAttrName: string
-  isChecked: null
+  saleAttrName?: string
+  isChecked?: null
 }
 // 属性值列表的数组的ts数据类型
 export type ISpuSaleAttrValueListType = ISpuSaleAttrValue[]
 // 单个销售属性的ts数据类型
 export interface ISpuSaleAttrType {
   id?: number
-  createTime: string
-  updateTime: string
-  spuId: number
+  createTime?: string
+  updateTime?: string
+  spuId?: number
   baseSaleAttrId: number
   saleAttrName: string
   spuSaleAttrValueList: ISpuSaleAttrValueListType

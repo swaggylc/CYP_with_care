@@ -6,6 +6,7 @@ import {
   IGetSPUImageListResType,
   IGetSPUSaleAttrListResType,
   IGetBaseSaleAttrListResType,
+  ISpuType,
 } from './type'
 
 enum API {
@@ -19,6 +20,10 @@ enum API {
   GETSPUSALEATTRLIST_URL = '/admin/product/spuSaleAttrList/',
   // 所有销售属性列表
   GETBASESALEATTRLIST_URL = '/admin/product/baseSaleAttrList',
+  // 添加一个新的spu
+  ADDSPU_URL = '/admin/product/saveSpuInfo',
+  // 修改一个spu
+  UPDATESPU_URL = '/admin/product/updateSpuInfo',
 }
 
 // 获取spu列表的方法
@@ -52,4 +57,12 @@ export const getBaseSaleAttrList = () => {
   return request.get<any, IGetBaseSaleAttrListResType>(
     API.GETBASESALEATTRLIST_URL,
   )
+}
+// 添加/修改一个spu的方法
+export const addOrUpdateSPU = (data: ISpuType) => {
+  if (data.id) {
+    return request.post<any, any>(API.UPDATESPU_URL, data)
+  } else {
+    return request.post<any, any>(API.ADDSPU_URL, data)
+  }
 }
