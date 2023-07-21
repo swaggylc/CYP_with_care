@@ -7,7 +7,7 @@ export interface IProductSpuType {
 
 // 单个SPU的ts数据类型
 export interface ISpuType {
-  id?: number
+  id?: number|string
   spuName: string
   description: string
   category3Id: number | string
