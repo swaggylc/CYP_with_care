@@ -13,11 +13,15 @@
                 v-model="spuParams.description" />
         </el-form-item>
         <el-form-item label="spu图片">
-            <el-upload list-type="picture-card">
+            <el-upload list-type="picture-card" v-model:file-list="allImageList" action="/api/admin/product/fileUpload"
+                :on-preview="handlePictureCardPreview" :before-upload="beforeUpload">
                 <el-icon>
                     <Plus />
                 </el-icon>
             </el-upload>
+            <el-dialog v-model="dialogVisible" style="height: 100%;width: 100%;">
+                <img w-full :src="dialogImageUrl" alt="Preview Image" />
+            </el-dialog>
         </el-form-item>
         <el-form-item label="spu销售属性">
             <el-select placeholder="请选择销售属性">
@@ -52,6 +56,7 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick } from 'vue'
 // 引入请求方法
+import { ElMessage } from 'element-plus'
 import {
     getSPUBrandList,    // 获取spu品牌列表
     getSPUBrandImageList,   // 获取spu图片列表  @param spuId: spuId
@@ -84,7 +89,7 @@ let allImageList = ref<ISpuImageListType>([])  // spu图片列表
 let spuSaleAttrList = ref<ISpuSaleAttrType[]>([])  // spu销售属性列表
 let allSpuSaleAttrList = ref<IBaseSaleAttrListType>([])  // 所有销售属性列表
 
-let spuParams = reactive<ISpuType>({
+let spuParams = ref<ISpuType>({
     spuName: '',    // spu名称
     description: '',    // spu描述
     category3Id: '',    // 三级分类id
@@ -93,14 +98,14 @@ let spuParams = reactive<ISpuType>({
     spuImageList: [],   // spu图片列表
 })
 
-
-
+let dialogVisible = ref<boolean>(false)  // 是否显示预览弹窗
+let dialogImageUrl = ref<string>('')  // 预览弹窗的图片地址
 
 
 
 // 获取spu数据的方法
 const getSpuData = async (spu: ISpuType) => {
-    spuParams = spu
+    spuParams.value = spu
     // 参数即为父组件传递过来的单个spu数据
     // 1.获取spu品牌列表
     let res: IGetSPUBrandListResType = await getSPUBrandList()
@@ -117,22 +122,58 @@ const getSpuData = async (spu: ISpuType) => {
 
     // 存储数据
     allBrandList.value = res.data
-    allImageList.value = res2.data
+    allImageList.value = res2.data.map(item => {
+        return {
+            ...item,
+            url: item.imgUrl,
+            name: item.imgName
+        }
+    })
     spuSaleAttrList.value = res3.data
     allSpuSaleAttrList.value = res4.data
 
 
+}
 
-
-
-
-
-
-
-
-
+// 照片墙预览的回调
+const handlePictureCardPreview = (file: any) => {
+    dialogImageUrl.value = file.url;
+    dialogVisible.value = true;
 
 }
+// 文件上传前的回调
+const beforeUpload = (file: any) => {
+    if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif') {
+        if (file.size / 1024 / 1024 < 4) {
+            return true
+        } else {
+            ElMessage.error('图片大小不能超过4M')
+            return false
+        }
+    } else {
+        ElMessage.error('只能上传jpg/png/gif格式的图片')
+        return false
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // 对外暴露
 defineExpose({
     getSpuData
