@@ -35,14 +35,17 @@
             <el-table-column label="属性名" prop="saleAttrName" width="150" />
             <el-table-column label="属性值">
                 <template #="{ row, $index }">
-                    <el-tag v-for="item in row.spuSaleAttrValueList" :key="item.id" class="mx-1" closable>
+                    <el-tag style="margin: 5px 10px;" v-for="item in row.spuSaleAttrValueList" :key="item.id" class="mx-1"
+                        closable>
                         {{ item.saleAttrValueName }}
                     </el-tag>
+                    <el-button type="success" icon="Plus" size="small"></el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="150">
                 <template #="{ row, $index }">
-                    <el-button type="danger" icon="Delete"></el-button>
+                    <el-button @click="spuSaleAttrList.splice($index, 1)" style="width: 100%;" type="danger" icon="Delete"
+                        size="small"></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -54,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick } from 'vue'
+import { ref, reactive } from 'vue'
 // 引入请求方法
 import { ElMessage } from 'element-plus'
 import {
