@@ -18,7 +18,7 @@
                 <el-table-column label="操作" width="300" class-name="action">
                     <template #default="{ row, $index }">
                         <el-button icon="Plus" type="primary" title="添加SKU"></el-button>
-                        <el-button icon="Edit" type="primary" plain title="修改SPU" @click="editSpu"></el-button>
+                        <el-button icon="Edit" type="primary" plain title="修改SPU" @click="editSpu(row)"></el-button>
                         <el-button icon="CollectionTag" type="info" title="查看SKU列表"></el-button>
                         <el-button icon="Delete" type="danger" title="删除SPU"></el-button>
                     </template>
@@ -30,7 +30,7 @@
                 @size-change="changeSize" />
         </el-card>
         <el-card style="margin: 20px 0;" v-show="scene == 1">
-            <SpuForm @backToZero="backToZero" />
+            <SpuForm ref="spuform" @backToZero="backToZero" />
         </el-card>
         <el-card style="margin: 20px 0;" v-show="scene == 2">
             <SkuForm />
@@ -48,7 +48,7 @@ let typeStore = useTypeStore()
 // 引入请求方法
 import { getSPUList } from '@/API/product/spu/index.ts'
 // 引入ts类型
-import { IGetSPUListResType, ISpuListType, ISpuType } from '@/API/product/spu/type.ts'
+import type { IGetSPUListResType, ISpuListType, ISpuType } from '@/API/product/spu/type.ts'
 import { ElCard, ElMessage } from 'element-plus';
 
 let scene = ref<number>(0)  // 场景值   0:显示已有spu列表   1:显示添加/修改spu表单   2:显示添加sku表单
@@ -56,7 +56,7 @@ let currentPage = ref<number>(1)    // 当前页
 let pageSize = ref<number>(10)   // 每页显示条数
 let total = ref<number>(0)  // 总条数
 let spuList = ref<ISpuListType>([])  // spu列表数据
-
+let spuform=ref<any>()  // spu表单组件的实例
 
 // 监听三级分类Id的变化
 watch(() => typeStore.ThreeId, (newVal) => {
@@ -71,6 +71,8 @@ watch(() => typeStore.ThreeId, (newVal) => {
 const GetSpuList = async (pager: number = 1) => {
     currentPage.value = pager
     let res: IGetSPUListResType = await getSPUList(currentPage.value, pageSize.value, typeStore.ThreeId)
+    // console.log(res);
+
     if (res.code === 200) {
         spuList.value = res.data.records
         total.value = res.data.total
@@ -89,8 +91,19 @@ const addSpu = () => {
     scene.value = 1
 }
 // 点击修改spu按钮的回调
-const editSpu = () => {
+const editSpu = (row: ISpuType) => {
+    // 切换场景
     scene.value = 1
+    // 调用子组件实例的方法，获取数据
+    spuform.value.getSpuData(row)
+
+
+
+
+
+
+
+
 }
 // 自定义事件
 const backToZero = () => {

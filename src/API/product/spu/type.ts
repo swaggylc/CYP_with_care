@@ -14,6 +14,9 @@ export interface ISpuType {
   tmId: number
   spuSaleAttrList: null
   spuImageList: null
+  createTime: string
+  updateTime: string
+  spuPosterList: null
 }
 // 多个SPU组成数组的ts数据类型
 export type ISpuListType = ISpuType[]
