@@ -2,12 +2,12 @@
     <div class="spu">
         <!-- 三级分类组件 -->
         <Type :scene="scene" />
-        <el-card style="margin: 20px 0;">
+        <el-card style="margin: 20px 0;" v-show="scene == 0">
             <template #header>
                 <div class="card-header">
                     <span>SPU management</span>
-                    <el-button class="button" type="primary" icon="Plus"
-                        :disabled="typeStore.ThreeId == ''">添加spu</el-button>
+                    <el-button class="button" type="primary" icon="Plus" :disabled="typeStore.ThreeId == ''"
+                        @click="addSpu">添加spu</el-button>
                 </div>
             </template>
             <!-- 表格部分 -->
@@ -18,7 +18,7 @@
                 <el-table-column label="操作" width="300" class-name="action">
                     <template #default="{ row, $index }">
                         <el-button icon="Plus" type="primary" title="添加SKU"></el-button>
-                        <el-button icon="Edit" type="primary" plain title="修改SPU"></el-button>
+                        <el-button icon="Edit" type="primary" plain title="修改SPU" @click="editSpu"></el-button>
                         <el-button icon="CollectionTag" type="info" title="查看SKU列表"></el-button>
                         <el-button icon="Delete" type="danger" title="删除SPU"></el-button>
                     </template>
@@ -29,12 +29,19 @@
                 layout=" prev, pager, next, jumper,->,total, sizes" :total="total" @current-change="GetSpuList"
                 @size-change="changeSize" />
         </el-card>
+        <el-card style="margin: 20px 0;" v-show="scene == 1">
+            <SpuForm @backToZero="backToZero" />
+        </el-card>
+        <el-card style="margin: 20px 0;" v-show="scene == 2">
+            <SkuForm />
+        </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-
+import SkuForm from './skuForm.vue';
+import SpuForm from './spuForm.vue';
 // 引入分类仓库
 import useTypeStore from '@/store/modules/type.ts'
 let typeStore = useTypeStore()
@@ -42,9 +49,9 @@ let typeStore = useTypeStore()
 import { getSPUList } from '@/API/product/spu/index.ts'
 // 引入ts类型
 import { IGetSPUListResType, ISpuListType, ISpuType } from '@/API/product/spu/type.ts'
-import { ElMessage } from 'element-plus';
+import { ElCard, ElMessage } from 'element-plus';
 
-let scene = ref<number>(0)
+let scene = ref<number>(0)  // 场景值   0:显示已有spu列表   1:显示添加/修改spu表单   2:显示添加sku表单
 let currentPage = ref<number>(1)    // 当前页
 let pageSize = ref<number>(10)   // 每页显示条数
 let total = ref<number>(0)  // 总条数
@@ -77,10 +84,18 @@ const changeSize = (val: number) => {
     GetSpuList()
 }
 
-
-
-
-
+// 点击添加spu按钮的回调
+const addSpu = () => {
+    scene.value = 1
+}
+// 点击修改spu按钮的回调
+const editSpu = () => {
+    scene.value = 1
+}
+// 自定义事件
+const backToZero = () => {
+    scene.value = 0
+}
 
 
 
