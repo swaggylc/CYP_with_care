@@ -24,10 +24,13 @@
             </el-dialog>
         </el-form-item>
         <el-form-item label="spu销售属性">
-            <el-select placeholder="请选择销售属性">
-                <el-option label="颜色" value="颜色"></el-option>
+            <el-select v-model="unseleteAttrIdAndName"
+                :placeholder="unSelectSaleAttr.length != 0 ? `还可选择${unSelectSaleAttr.length}个销售属性` : '已选满'">
+                <el-option v-for="item in unSelectSaleAttr" :key="item.id" :label="item.name"
+                    :value="`${item.id},${item.name}`"></el-option>
             </el-select>
-            <el-button style="margin-left: 25px;" type="primary" icon="Plus">添加销售属性</el-button>
+            <el-button style="margin-left: 25px;" type="primary" icon="Plus" :disabled="unseleteAttrIdAndName == ''"
+                @click="addSaleAttr">添加销售属性</el-button>
 
         </el-form-item>
         <el-table border style="margin: 20px 0;" :data="spuSaleAttrList">
@@ -57,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, computed, reactive } from 'vue'
 // 引入请求方法
 import { ElMessage } from 'element-plus'
 import {
@@ -104,6 +107,8 @@ let spuParams = ref<ISpuType>({
 let dialogVisible = ref<boolean>(false)  // 是否显示预览弹窗
 let dialogImageUrl = ref<string>('')  // 预览弹窗的图片地址
 
+let unseleteAttrIdAndName = ref<string>('')  // 未选择的销售属性名
+
 
 
 // 获取spu数据的方法
@@ -136,6 +141,8 @@ const getSpuData = async (spu: ISpuType) => {
     allSpuSaleAttrList.value = res4.data
 
 
+
+
 }
 
 // 照片墙预览的回调
@@ -159,9 +166,51 @@ const beforeUpload = (file: any) => {
     }
 }
 
+// 计算哪个销售属性未被选择
+const unSelectSaleAttr = computed(() => {
+    let arr: IBaseSaleAttrListType = []
+    allSpuSaleAttrList.value.forEach(item => {
+        let flag = spuSaleAttrList.value.some(hasAttr => {
+            return hasAttr.saleAttrName == item.name
+        })
+        if (!flag) {
+            arr.push(item)
+        }
+    })
+    return arr
+})
+
+// 点击添加销售属性按钮的回调
+const addSaleAttr = () => {
+    // 判断添加的销售属性是否已经存在
+    let flag = spuSaleAttrList.value.some(item => {
+        return item.saleAttrName == unseleteAttrIdAndName.value.split(',')[1]
+    })
+    if (flag) {
+        ElMessage.error('该销售属性已经存在')
+        return
+    }
 
 
 
+    // 判断是否已经选择了全部销售属性
+    if (spuSaleAttrList.value.length == allSpuSaleAttrList.value.length) {
+        ElMessage.error('已选择全部销售属性')
+        return
+    }
+    // 1.解构出baseSaleAttrId和saleAttrName
+    let [baseSaleAttrId, saleAttrName] = unseleteAttrIdAndName.value.split(',')
+    // 2.创建一个新的销售属性对象
+    let newSaleAttr: ISpuSaleAttrType = {
+        baseSaleAttrId: baseSaleAttrId,
+        saleAttrName,
+        spuSaleAttrValueList: []
+    }
+    // 3.将新的销售属性对象添加到spuSaleAttrList中
+    spuSaleAttrList.value.push(newSaleAttr)
+    // 4.清空unseleteAttrName
+    unseleteAttrIdAndName.value = ''
+}
 
 
 
