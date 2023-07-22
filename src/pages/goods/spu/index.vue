@@ -108,6 +108,8 @@ const editSpu = (row: ISpuType) => {
 // 自定义事件
 const backToZero = () => {
     scene.value = 0
+    // 重新获取数据
+    GetSpuList()
 }
 
 

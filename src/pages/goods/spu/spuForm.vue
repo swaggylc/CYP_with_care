@@ -56,7 +56,7 @@
             </el-table-column>
         </el-table>
         <el-form-item>
-            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="save">保存</el-button>
             <el-button @click="toZero">取消</el-button>
         </el-form-item>
     </el-form>
@@ -70,7 +70,8 @@ import {
     getSPUBrandList,    // 获取spu品牌列表
     getSPUBrandImageList,   // 获取spu图片列表  @param spuId: spuId
     getSPUSaleAttrList, // 获取spu销售属性列表  @param spuId: spuId
-    getBaseSaleAttrList // 获取所有销售属性列表
+    getBaseSaleAttrList, // 获取所有销售属性列表
+    addOrUpdateSPU  // 添加或修改spu
 } from '@/API/product/spu/index.ts'
 // 引入ts类型
 import type {
@@ -87,12 +88,7 @@ import type {
 } from '@/API/product/spu/type.ts'
 
 
-let $emit = defineEmits(['backToZero'])
 
-//  通过自定义事件，返回到0场景
-const toZero = () => {
-    $emit('backToZero')
-}
 // 存储spu数据
 let allBrandList = ref<ISpuBrandListType>([])  // spu品牌列表
 let allImageList = ref<ISpuImageListType>([])  // spu图片列表
@@ -113,6 +109,13 @@ let dialogImageUrl = ref<string>('')  // 预览弹窗的图片地址
 
 let unseleteAttrIdAndName = ref<string>('')  // 未选择的销售属性名
 
+
+let $emit = defineEmits(['backToZero'])
+
+//  通过自定义事件，返回到0场景
+const toZero = () => {
+    $emit('backToZero')
+}
 
 
 // 获取spu数据的方法
@@ -143,10 +146,6 @@ const getSpuData = async (spu: ISpuType) => {
     })
     spuSaleAttrList.value = res3.data
     allSpuSaleAttrList.value = res4.data
-
-
-
-
 }
 
 // 照片墙预览的回调
@@ -261,7 +260,39 @@ const toButton = (row: ISpuSaleAttrType) => {
 //     })
 // }
 
+// 点击保存按钮的回调
+const save = async () => {
+    // 保证spuSaleAttrList不为空
+    if (spuSaleAttrList.value.length == 0) {
+        ElMessage.error('请添加至少一个销售属性')
+        return
+    }
+    // 判断spuSaleAttrList中的每个销售属性是否都有属性值
+    let flag = spuSaleAttrList.value.every(item => {
+        return item.spuSaleAttrValueList.length != 0
+    })
+    if (!flag) {
+        ElMessage.error('请添加属性值')
+        return
+    }
+    // 整理参数——spuImageList
+    spuParams.value.spuImageList = allImageList.value.map((item: any) => {
+        return {
+            imgUrl: (item.response && item.response.data) || item.url,
+            imgName: item.name
+        }
+    })
+    // 整理参数——spuSaleAttrList
+    spuParams.value.spuSaleAttrList = spuSaleAttrList.value
+    let res: any = await addOrUpdateSPU(spuParams.value)
+    if (res.code == 200) {
+        ElMessage.success(spuParams.value.id ? '修改成功' : '添加成功')
+        $emit('backToZero')
 
+    } else {
+        ElMessage.error(spuParams.value.id ? '修改失败' : '添加失败')
+    }
+}
 
 
 
@@ -297,10 +328,6 @@ const toButton = (row: ISpuSaleAttrType) => {
 defineExpose({
     getSpuData
 })
-
-
-
-
 </script>
 <script lang="ts">
 export default {
