@@ -56,7 +56,7 @@ let currentPage = ref<number>(1)    // 当前页
 let pageSize = ref<number>(10)   // 每页显示条数
 let total = ref<number>(0)  // 总条数
 let spuList = ref<ISpuListType>([])  // spu列表数据
-let spuform=ref<any>()  // spu表单组件的实例
+let spuform = ref<any>()  // spu表单组件的实例
 
 // 监听三级分类Id的变化
 watch(() => typeStore.ThreeId, (newVal) => {
@@ -89,27 +89,30 @@ const changeSize = (val: number) => {
 // 点击添加spu按钮的回调
 const addSpu = () => {
     scene.value = 1
+    // 调用子组件实例的方法，获取数据
+    spuform.value.addSpuDataInit(typeStore.ThreeId)
 }
+
 // 点击修改spu按钮的回调
 const editSpu = (row: ISpuType) => {
     // 切换场景
     scene.value = 1
     // 调用子组件实例的方法，获取数据
     spuform.value.getSpuData(row)
-
-
-
-
-
-
-
-
 }
+
 // 自定义事件
-const backToZero = () => {
-    scene.value = 0
-    // 重新获取数据
-    GetSpuList()
+const backToZero = (obj: any) => {
+    let { flag, params } = obj
+    scene.value = flag
+    // 根据params判断是留在当前页还是跳转到第一页
+    if (params == 'update') {
+        // 更新留在当前页
+        GetSpuList(currentPage.value)
+    } else {
+        // 添加跳转到第一页
+        GetSpuList()
+    }
 }
 
 

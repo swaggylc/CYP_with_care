@@ -43,9 +43,10 @@
                         v-for="(item, index) in row.spuSaleAttrValueList" :key="item.id" class="mx-1" closable>
                         {{ item.saleAttrValueName }}
                     </el-tag>
-                    <el-input @blur="toButton(row)" v-model="row.inputValue" v-if="row.flag" placeholder="请输入属性值"
-                        size="small" style="width: 200px;"></el-input>
-                    <el-button @click="toInput(row)" v-else type="success" icon="Plus" size="small"></el-button>
+                    <el-input :ref="(element: any) => inputArr[$index] = element" @blur="toButton(row)"
+                        v-model="row.inputValue" v-if="row.flag" placeholder="请输入属性值" size="small"
+                        style="width: 200px;"></el-input>
+                    <el-button @click="toInput(row, $index)" v-else type="success" icon="Plus" size="small"></el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="150">
@@ -63,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 // 引入请求方法
 import { ElMessage } from 'element-plus'
 import {
@@ -87,7 +88,7 @@ import type {
     ISpuSaleAttrValue
 } from '@/API/product/spu/type.ts'
 
-
+let inputArr = ref<any>([]) // 存储输入框的实例
 
 // 存储spu数据
 let allBrandList = ref<ISpuBrandListType>([])  // spu品牌列表
@@ -114,7 +115,10 @@ let $emit = defineEmits(['backToZero'])
 
 //  通过自定义事件，返回到0场景
 const toZero = () => {
-    $emit('backToZero')
+    $emit('backToZero', {
+        flag: 0,
+        params: 'update'
+    })
 }
 
 
@@ -193,9 +197,6 @@ const addSaleAttr = () => {
         ElMessage.error('该销售属性已经存在')
         return
     }
-
-
-
     // 判断是否已经选择了全部销售属性
     if (spuSaleAttrList.value.length == allSpuSaleAttrList.value.length) {
         ElMessage.error('已选择全部销售属性')
@@ -213,14 +214,22 @@ const addSaleAttr = () => {
     spuSaleAttrList.value.push(newSaleAttr)
     // 4.清空unseleteAttrName
     unseleteAttrIdAndName.value = ''
+    // 5.让添加的销售属性获取焦点
+    nextTick(() => {
+        inputArr.value[inputArr.value.length - 1].focus()
+    })
 }
 
 // 点击添加销售属性值按钮的回调
-const toInput = (row: ISpuSaleAttrType) => {
+const toInput = (row: ISpuSaleAttrType, $index: number) => {
     // 添加flag属性，控制是否显示输入框
     row.flag = true
     // 添加inputValue属性，存储输入框的值
     row.inputValue = ''
+    // 让输入框获取焦点
+    nextTick(() => {
+        inputArr.value[$index].focus()
+    })
 }
 
 // 输入框失去焦点的回调
@@ -238,6 +247,8 @@ const toButton = (row: ISpuSaleAttrType) => {
     })
     if (flag) {
         ElMessage.error('该属性值已经存在')
+        // 清空inputValue
+        row.inputValue = ''
         return
     }
     // 创建一个新的销售属性值对象
@@ -287,14 +298,48 @@ const save = async () => {
     let res: any = await addOrUpdateSPU(spuParams.value)
     if (res.code == 200) {
         ElMessage.success(spuParams.value.id ? '修改成功' : '添加成功')
-        $emit('backToZero')
+        $emit('backToZero', {
+            flag: 0,
+            params: spuParams.value.id ? 'update' : 'add'
+        })
 
     } else {
+        console.log(res);
+
         ElMessage.error(spuParams.value.id ? '修改失败' : '添加失败')
     }
 }
 
 
+// 添加一个新的spu初始化数据的方法
+const addSpuDataInit = async (ThreeId: number | string) => {
+    // 重置表单
+    Object.assign(spuParams.value, {
+        spuName: '',    // spu名称
+        description: '',    // spu描述
+        category3Id: '',    // 三级分类id
+        tmId: '',           // 品牌id
+        spuSaleAttrList: [],    // spu销售属性列表
+        spuImageList: [],   // spu图片列表
+    })
+    // 重置图片列表
+    allImageList.value = []
+    // 重置销售属性列表
+    spuSaleAttrList.value = []
+    // 重置未选择的销售属性名
+    unseleteAttrIdAndName.value = ''
+
+    // 存储三级分类Id
+    spuParams.value.category3Id = ThreeId
+    // 1.获取spu品牌列表
+    let res: IGetSPUBrandListResType = await getSPUBrandList()
+    // 2.获取所有销售属性列表
+    let res2: IGetBaseSaleAttrListResType = await getBaseSaleAttrList()
+
+    // 存储数据
+    allBrandList.value = res.data
+    allSpuSaleAttrList.value = res2.data
+}
 
 
 
@@ -326,7 +371,8 @@ const save = async () => {
 
 // 对外暴露
 defineExpose({
-    getSpuData
+    getSpuData,
+    addSpuDataInit
 })
 </script>
 <script lang="ts">
