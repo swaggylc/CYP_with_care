@@ -14,59 +14,31 @@
     </el-form-item>
     <el-form-item label="平台属性">
       <el-form inline class="inform">
-        <el-form-item label="手机一级">
+        <el-form-item v-for="item in attrList" :key="item.id" :label="item.attrName">
           <el-select>
-            <el-option label="一级"></el-option>
-            <el-option label="二级"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机一级">
-          <el-select>
-            <el-option label="一级"></el-option>
-            <el-option label="二级"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机一级">
-          <el-select>
-            <el-option label="一级"></el-option>
-            <el-option label="二级"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机一级">
-          <el-select>
-            <el-option label="一级"></el-option>
-            <el-option label="二级"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机一级">
-          <el-select>
-            <el-option label="一级"></el-option>
-            <el-option label="二级"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机一级">
-          <el-select>
-            <el-option label="一级"></el-option>
-            <el-option label="二级"></el-option>
+            <el-option v-for="attrItem in item.attrValueList" :key="attrItem.id" :label="attrItem.valueName"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
     </el-form-item>
     <el-form-item label="销售属性">
-      <el-select>
-        <el-option label="一级"></el-option>
-        <el-option label="二级"></el-option>
-      </el-select>
+      <el-form inline>
+        <el-form-item v-for="item in saleAttrList" :key="item.id" :label="item.saleAttrName" > 
+            <el-select>
+                <el-option v-for="saleAttrItem in item.spuSaleAttrValueList" :key="saleAttrItem.id" :label="saleAttrItem.saleAttrValueName"></el-option>
+            </el-select>
+        </el-form-item>
+      </el-form>
     </el-form-item>
     <el-form-item label="图片名称">
-      <el-table border>
+      <el-table border :data="imageList">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="照片">
           <template #default="{ row }">
-            <img src="" alt="" style="width: 100px; height: 100px" />
+            <img :src="row.imgUrl" alt="" style="width: 100px; height: 100px" />
           </template>
         </el-table-column>
-        <el-table-column label="名称" />
+        <el-table-column label="名称" prop="imgName" />
         <el-table-column label="操作">
           <template #default="{ row }">
             <el-button type="primary" size="default">设为默认</el-button>
@@ -82,6 +54,28 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+// 引入请求方法
+import { getAttr } from '@/API/product/attr/index.ts'
+import {
+  getSPUBrandImageList,
+  getSPUSaleAttrList,
+} from '@/API/product/spu/index.ts'
+
+// 引入ts类型
+import type {
+  ISpuType,
+  IGetSPUImageListResType,
+  IGetSPUSaleAttrListResType,
+  ISpuSaleAttrType,
+  ISpuImageListType,
+} from '@/API/product/spu/type.ts'
+import type { IAttrRes, IAttr } from '@/API/product/attr/type.ts'
+
+let attrList = ref<IAttr[]>([]) // 平台属性列表
+let saleAttrList = ref<ISpuSaleAttrType[]>([]) // 销售属性列表
+let imageList = ref<ISpuImageListType>([]) // 图片列表
+
 let $emit = defineEmits(['backToZero'])
 
 // 点击取消按钮的回调
@@ -91,6 +85,33 @@ const cancel = () => {
     params: '',
   })
 }
+
+const initSkuData = async (
+  OneId: number | string,
+  TwoId: number | string,
+  row: ISpuType,
+) => {
+  // 初始化sku数据
+  // 1. 获取平台属性
+  let res: IAttrRes = await getAttr(OneId, TwoId, row.category3Id)
+  // 2. 获取销售属性
+  let res2: IGetSPUSaleAttrListResType = await getSPUSaleAttrList(
+    row.id as number,
+  )
+  // 3. 获取图片列表
+  let res3: IGetSPUImageListResType = await getSPUBrandImageList(
+    row.id as number,
+  )
+
+  // 储存数据
+  attrList.value = res.data
+  saleAttrList.value = res2.data
+  imageList.value = res3.data
+}
+
+defineExpose({
+  initSkuData,
+})
 </script>
 
 <style scoped lang="scss">

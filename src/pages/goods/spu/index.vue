@@ -32,7 +32,7 @@
               icon="Plus"
               type="primary"
               title="添加SKU"
-              @click="addSku"
+              @click="addSku(row)"
             ></el-button>
             <el-button
               icon="Edit"
@@ -65,7 +65,7 @@
       <SpuForm ref="spuform" @backToZero="backToZero" />
     </el-card>
     <el-card style="margin: 20px 0" v-show="scene == 2">
-      <SkuForm @backToZero="backToZero" />
+      <SkuForm ref="skuform" @backToZero="backToZero" />
     </el-card>
   </div>
 </template>
@@ -93,6 +93,7 @@ let pageSize = ref<number>(10) // 每页显示条数
 let total = ref<number>(0) // 总条数
 let spuList = ref<ISpuListType>([]) // spu列表数据
 let spuform = ref<any>() // spu表单组件的实例
+let skuform = ref<any>() // sku表单组件的实例
 
 // 监听三级分类Id的变化
 watch(
@@ -158,12 +159,12 @@ const backToZero = (obj: any) => {
 }
 
 // 点击添加sku按钮的回调
-const addSku = () => {
+const addSku = (row:ISpuType) => {
   // 切换场景
   scene.value = 2
+  // 调用子组件实例的方法，获取数据
+  skuform.value.initSkuData(typeStore.OneId,typeStore.TwoId,row)
 }
-
-
 </script>
 
 <style scoped lang="scss">
