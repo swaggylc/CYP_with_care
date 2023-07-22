@@ -37,12 +37,15 @@
             <el-table-column label="序号" type="index" align="center" width="100" />
             <el-table-column label="属性名" prop="saleAttrName" width="150" />
             <el-table-column label="属性值">
+                <!-- row是单个属性对象 -->
                 <template #="{ row, $index }">
-                    <el-tag style="margin: 5px 10px;" v-for="item in row.spuSaleAttrValueList" :key="item.id" class="mx-1"
-                        closable>
+                    <el-tag @close="row.spuSaleAttrValueList.splice(index, 1)" style="margin: 5px 10px;"
+                        v-for="(item, index) in row.spuSaleAttrValueList" :key="item.id" class="mx-1" closable>
                         {{ item.saleAttrValueName }}
                     </el-tag>
-                    <el-button type="success" icon="Plus" size="small"></el-button>
+                    <el-input @blur="toButton(row)" v-model="row.inputValue" v-if="row.flag" placeholder="请输入属性值"
+                        size="small" style="width: 200px;"></el-input>
+                    <el-button @click="toInput(row)" v-else type="success" icon="Plus" size="small"></el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="150">
@@ -79,7 +82,8 @@ import type {
     ISpuBrandListType,
     ISpuImageListType,
     ISpuSaleAttrType,
-    IBaseSaleAttrListType
+    IBaseSaleAttrListType,
+    ISpuSaleAttrValue
 } from '@/API/product/spu/type.ts'
 
 
@@ -211,6 +215,69 @@ const addSaleAttr = () => {
     // 4.清空unseleteAttrName
     unseleteAttrIdAndName.value = ''
 }
+
+// 点击添加销售属性值按钮的回调
+const toInput = (row: ISpuSaleAttrType) => {
+    // 添加flag属性，控制是否显示输入框
+    row.flag = true
+    // 添加inputValue属性，存储输入框的值
+    row.inputValue = ''
+}
+
+// 输入框失去焦点的回调
+const toButton = (row: ISpuSaleAttrType) => {
+    // 解构出inputValue
+    let { baseSaleAttrId, inputValue } = row
+    // 判断inputValue是否为空
+    if (inputValue?.trim() == '') {
+        ElMessage.error('输入框不能为空')
+        return
+    }
+    // 判断spuSaleAttrValueList中是否已经存在该属性值
+    let flag = row.spuSaleAttrValueList.some(item => {
+        return item.saleAttrValueName == inputValue
+    })
+    if (flag) {
+        ElMessage.error('该属性值已经存在')
+        return
+    }
+    // 创建一个新的销售属性值对象
+    let obj: ISpuSaleAttrValue = {
+        baseSaleAttrId: baseSaleAttrId as number,
+        saleAttrValueName: row.inputValue as string
+    }
+    // 将新的销售属性值对象添加到spuSaleAttrValueList中
+    row.spuSaleAttrValueList.push(obj)
+    // 失去焦点后，将flag改为false，将inputValue的值添加到spuSaleAttrValueList中
+    row.flag = false
+}
+
+// 移除tag标签的回调
+// const moveAttrValue = (item: ISpuSaleAttrValue, row: any) => {
+//     // 解构出要移除的属性值
+//     let { saleAttrValueName } = item
+//     row.spuSaleAttrValueList = row.spuSaleAttrValueList.filter((listItem: any) => {
+//         return listItem.saleAttrValueName != saleAttrValueName
+//     })
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -93,9 +93,11 @@ export interface ISpuSaleAttrType {
   createTime?: string
   updateTime?: string
   spuId?: number
-  baseSaleAttrId: number|string
+  baseSaleAttrId: number | string
   saleAttrName: string
   spuSaleAttrValueList: ISpuSaleAttrValueListType
+  flag?: boolean
+  inputValue?: string
 }
 // 销售属性接口返回的数据类型
 export interface IGetSPUSaleAttrListResType extends IProductSpuType {
