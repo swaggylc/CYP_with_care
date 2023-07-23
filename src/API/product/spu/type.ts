@@ -117,3 +117,28 @@ export type IBaseSaleAttrListType = IBaseSaleAttrType[]
 export interface IGetBaseSaleAttrListResType extends IProductSpuType {
   data: IBaseSaleAttrListType
 }
+
+// sku单个平台属性的ts数据类型
+export interface ISkuAttrValue {
+  attrId?: number | string
+  valueId: number | string
+}
+// sku单个销售属性的ts数据类型
+export interface ISkuSaleAttrValue {
+  saleAttrId?: number | string
+  saleAttrValueId: number | string
+}
+
+// 添加sku所需要的数据类型
+export interface IAddSkuType {
+  skuName: string // sku名称
+  skuDesc: string // sku描述
+  category3Id: number | string // 三级分类id
+  tmId: number | string // 品牌id
+  spuId: number | string // spuId
+  price: string // 价格
+  weight: string // 重量
+  skuAttrValueList?: ISkuAttrValue[] // sku平台属性
+  skuSaleAttrValueList?: ISkuSaleAttrValue[] // sku销售属性值列表
+  skuDefaultImg: string // sku默认图片地址
+}
