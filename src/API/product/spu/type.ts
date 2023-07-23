@@ -143,3 +143,8 @@ export interface IAddSkuType {
   skuSaleAttrValueList?: ISkuSaleAttrValue[] // sku销售属性值列表
   skuDefaultImg: string // sku默认图片地址
 }
+
+// 获取sku列表接口返回的数据类型
+export interface IGetSKUListResType extends IProductSpuType {
+  data: IAddSkuType[]
+}

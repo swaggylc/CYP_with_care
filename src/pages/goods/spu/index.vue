@@ -45,6 +45,7 @@
               icon="CollectionTag"
               type="info"
               title="查看SKU列表"
+              @click="showSkuList(row)"
             ></el-button>
             <el-button icon="Delete" type="danger" title="删除SPU"></el-button>
           </template>
@@ -68,6 +69,26 @@
       <SkuForm ref="skuform" @backToZero="backToZero" />
     </el-card>
   </div>
+  <el-dialog v-model="dialogVisible" title="sku列表" width="50%">
+    <el-table :data="skuDataList" style="width: 100%" border>
+      <el-table-column prop="skuName" label="sku名称" width="180" />
+      <el-table-column prop="price" label="sku价格" width="180" />
+      <el-table-column prop="weight" label="sku重量" />
+      <el-table-column label="sku图片">
+        <template #="{ row }">
+          <img :src="row.skuDefaultImg" style="width: 100px; height: 100px" />
+        </template>
+      </el-table-column>
+    </el-table>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          确定
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -78,12 +99,14 @@ import SpuForm from './spuForm.vue'
 import useTypeStore from '@/store/modules/type.ts'
 let typeStore = useTypeStore()
 // 引入请求方法
-import { getSPUList } from '@/API/product/spu/index.ts'
+import { getSPUList, getSKUInfo } from '@/API/product/spu/index.ts'
 // 引入ts类型
 import type {
   IGetSPUListResType,
   ISpuListType,
   ISpuType,
+  IGetSKUListResType,
+  IAddSkuType,
 } from '@/API/product/spu/type.ts'
 import { ElCard, ElMessage } from 'element-plus'
 
@@ -94,6 +117,8 @@ let total = ref<number>(0) // 总条数
 let spuList = ref<ISpuListType>([]) // spu列表数据
 let spuform = ref<any>() // spu表单组件的实例
 let skuform = ref<any>() // sku表单组件的实例
+let dialogVisible = ref<boolean>(false) // 弹窗的显示与隐藏
+let skuDataList = ref<IAddSkuType[]>([]) //sku列表数据
 
 // 监听三级分类Id的变化
 watch(
@@ -159,11 +184,26 @@ const backToZero = (obj: any) => {
 }
 
 // 点击添加sku按钮的回调
-const addSku = (row:ISpuType) => {
+const addSku = (row: ISpuType) => {
   // 切换场景
   scene.value = 2
   // 调用子组件实例的方法，获取数据
-  skuform.value.initSkuData(typeStore.OneId,typeStore.TwoId,row)
+  skuform.value.initSkuData(typeStore.OneId, typeStore.TwoId, row)
+}
+
+// 点击查看sku列表按钮的回调
+const showSkuList = async (row: ISpuType) => {
+  let res: IGetSKUListResType = await getSKUInfo(row.id as number)
+  console.log(res)
+
+  if (res.code === 200) {
+    // 存储数据
+    skuDataList.value = res.data
+    // 切换场景
+    dialogVisible.value = true
+  } else {
+    ElMessage.error('获取数据失败！')
+  }
 }
 </script>
 

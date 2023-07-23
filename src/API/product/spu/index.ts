@@ -8,6 +8,7 @@ import {
   IGetBaseSaleAttrListResType,
   ISpuType,
   IAddSkuType,
+  IGetSKUListResType,
 } from './type'
 
 enum API {
@@ -27,6 +28,8 @@ enum API {
   UPDATESPU_URL = '/admin/product/updateSpuInfo',
   // 添加一个sku
   ADDSKU_URL = '/admin/product/saveSkuInfo',
+  // 查看spu下的所有sku
+  GETSKUINFO_URL = '/admin/product/findBySpuId/',
 }
 
 // 获取spu列表的方法
@@ -72,4 +75,8 @@ export const addOrUpdateSPU = (data: ISpuType) => {
 // 添加一个sku的方法
 export const addSKU = (data: IAddSkuType) => {
   return request.post<any, any>(API.ADDSKU_URL, data)
+}
+// 查看spu下的所有sku的方法
+export const getSKUInfo = (spuId: number | string) => {
+  return request.get<any, IGetSKUListResType>(API.GETSKUINFO_URL + spuId)
 }
