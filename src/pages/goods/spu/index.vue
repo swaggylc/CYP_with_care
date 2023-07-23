@@ -47,7 +47,12 @@
               title="查看SKU列表"
               @click="showSkuList(row)"
             ></el-button>
-            <el-button icon="Delete" type="danger" title="删除SPU"></el-button>
+            <el-button
+              icon="Delete"
+              type="danger"
+              title="删除SPU"
+              @click="DeleteSpu(row)"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -92,14 +97,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 import SkuForm from './skuForm.vue'
 import SpuForm from './spuForm.vue'
 // 引入分类仓库
 import useTypeStore from '@/store/modules/type.ts'
 let typeStore = useTypeStore()
 // 引入请求方法
-import { getSPUList, getSKUInfo } from '@/API/product/spu/index.ts'
+import { getSPUList, getSKUInfo, deleteSPU } from '@/API/product/spu/index.ts'
 // 引入ts类型
 import type {
   IGetSPUListResType,
@@ -205,6 +210,24 @@ const showSkuList = async (row: ISpuType) => {
     ElMessage.error('获取数据失败！')
   }
 }
+
+// 点击删除spu按钮的回调
+const DeleteSpu = async (row: ISpuType) => {
+  let res = await deleteSPU(row.id as number)
+  if (res.code === 200) {
+    ElMessage.success('删除成功！')
+    GetSpuList(
+      spuList.value.length > 1 ? currentPage.value : currentPage.value - 1,
+    )
+  } else {
+    ElMessage.error('删除失败！')
+  }
+}
+
+// 组件销毁前的钩子，清除仓库数据
+onBeforeUnmount(() => {
+  typeStore.$reset()
+})
 </script>
 
 <style scoped lang="scss">
