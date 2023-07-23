@@ -73,6 +73,9 @@
     <el-card style="margin: 20px 0" v-show="scene == 2">
       <SkuForm ref="skuform" @backToZero="backToZero" />
     </el-card>
+    <div v-show="typeStore.ThreeId == ''">
+      <el-empty description="暂无数据"></el-empty>
+    </div>
   </div>
   <el-dialog v-model="dialogVisible" title="sku列表" width="50%">
     <el-table :data="skuDataList" style="width: 100%" border>
