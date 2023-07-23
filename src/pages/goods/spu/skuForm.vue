@@ -34,11 +34,12 @@
           :key="item.id"
           :label="item.attrName"
         >
-          <el-select>
+          <el-select v-model="item.AttrIdAndValueId">
             <el-option
               v-for="attrItem in item.attrValueList"
               :key="attrItem.id"
               :label="attrItem.valueName"
+              :value="`${item.id},${attrItem.id}`"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -51,18 +52,19 @@
           :key="item.id"
           :label="item.saleAttrName"
         >
-          <el-select>
+          <el-select v-model="item.saleAttrIdAndValueId">
             <el-option
               v-for="saleAttrItem in item.spuSaleAttrValueList"
               :key="saleAttrItem.id"
               :label="saleAttrItem.saleAttrValueName"
+              :value="`${item.id},${saleAttrItem.id}`"
             ></el-option>
           </el-select>
         </el-form-item>
       </el-form>
     </el-form-item>
     <el-form-item label="图片名称">
-      <el-table border :data="imageList">
+      <el-table border :data="imageList" ref="table">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="照片">
           <template #default="{ row }">
@@ -72,25 +74,33 @@
         <el-table-column label="名称" prop="imgName" />
         <el-table-column label="操作">
           <template #default="{ row }">
-            <el-button type="primary" size="default">设为默认</el-button>
+            <el-button
+              type="primary"
+              size="default"
+              @click="setImgDefault(row)"
+            >
+              设为默认
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary">提交</el-button>
+      <el-button type="primary" @click="save">提交</el-button>
       <el-button @click="cancel">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
 import { ref, reactive } from 'vue'
 // 引入请求方法
 import { getAttr } from '@/API/product/attr/index.ts'
 import {
   getSPUBrandImageList,
   getSPUSaleAttrList,
+  addSKU,
 } from '@/API/product/spu/index.ts'
 
 // 引入ts类型
@@ -101,6 +111,8 @@ import type {
   ISpuSaleAttrType,
   ISpuImageListType,
   IAddSkuType,
+  ISpuImageType,
+  ISkuAttrValue,
 } from '@/API/product/spu/type.ts'
 import type { IAttrRes, IAttr } from '@/API/product/attr/type.ts'
 
@@ -119,14 +131,14 @@ let skuParams = reactive<IAddSkuType>({
   skuDesc: '', // sku描述
   price: '', // 价格
   weight: '', // 重量
-  
+
   skuAttrValueList: [], // sku平台属性
   skuSaleAttrValueList: [], // sku销售属性值列表
   skuDefaultImg: '', // sku默认图片地址
 })
 
 let $emit = defineEmits(['backToZero'])
-
+let table = ref<any>() // 获取table组件实例
 // 点击取消按钮的回调
 const cancel = () => {
   $emit('backToZero', {
@@ -161,6 +173,64 @@ const initSkuData = async (
   attrList.value = res.data
   saleAttrList.value = res2.data
   imageList.value = res3.data
+}
+
+// 点击设为默认按钮的回调
+const setImgDefault = (row: ISpuImageType) => {
+  // 保证只有一张图片是默认图片
+  // 先将所有的图片都设置为非默认图片
+  imageList.value.forEach((item: ISpuImageType) => {
+    table.value.toggleRowSelection(item, false)
+  })
+  // 再将当前点击的图片设置为默认图片
+  table.value.toggleRowSelection(row, true)
+  // 给skuParams设置默认图片
+  skuParams.skuDefaultImg = row.imgUrl
+}
+
+// 点击提交按钮的回调
+const save = async () => {
+  // 1.整理参数
+  // 1.1 整理平台属性
+  skuParams.skuAttrValueList = attrList.value.reduce((prev: any, next: any) => {
+    if (next.AttrIdAndValueId) {
+      let [attrId, valueId] = next.AttrIdAndValueId.split(',')
+      prev.push({
+        attrId,
+        valueId,
+      })
+    }
+    return prev
+  }, [])
+  // 1.2 整理销售属性
+  skuParams.skuSaleAttrValueList = saleAttrList.value.reduce(
+    (prev: any, next: any) => {
+      if (next.saleAttrIdAndValueId) {
+        let [saleAttrId, saleAttrValueId] = next.saleAttrIdAndValueId.split(',')
+        prev.push({
+          saleAttrId,
+          saleAttrValueId,
+        })
+      }
+      return prev
+    },
+    [],
+  )
+  // 2. 发送请求
+  let res: any = await addSKU(skuParams)
+  console.log(res)
+
+  // 3. 提示用户
+  if (res.code === 200) {
+    ElMessage.success('添加sku成功')
+    // 4. 跳转到spu列表页面,触发父组件的backToZero事件
+    $emit('backToZero', {
+      flag: 0,
+      params: '',
+    })
+  } else {
+    ElMessage.error('添加sku失败')
+  }
 }
 
 defineExpose({

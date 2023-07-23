@@ -41,9 +41,10 @@ export interface IAttr {
   createTime: null
   updateTime: null
   attrName: string
-  categoryId: number|string
+  categoryId: number | string
   categoryLevel: number
   attrValueList: IAttrValueArr
+  AttrIdAndValueId?: string
 }
 // 获取已有属性及属性值接口返回的ts类型
 export interface IAttrRes extends IResponse {

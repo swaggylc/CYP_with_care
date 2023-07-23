@@ -98,6 +98,7 @@ export interface ISpuSaleAttrType {
   spuSaleAttrValueList: ISpuSaleAttrValueListType
   flag?: boolean
   inputValue?: string
+  saleAttrIdAndValueId?: string
 }
 // 销售属性接口返回的数据类型
 export interface IGetSPUSaleAttrListResType extends IProductSpuType {
