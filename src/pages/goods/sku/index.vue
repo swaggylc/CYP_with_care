@@ -28,7 +28,11 @@
             @click="changeSaleType(row)"
           ></el-button>
           <el-button type="primary" icon="Edit" @click="Edit"></el-button>
-          <el-button type="info" icon="Platform"></el-button>
+          <el-button
+            type="info"
+            icon="Platform"
+            @click="showDetail"
+          ></el-button>
           <el-button type="danger" icon="Delete"></el-button>
         </template>
       </el-table-column>
@@ -43,14 +47,78 @@
       @size-change="changeSize"
     />
   </el-card>
+  <el-drawer v-model="visible" show-close="false" size="35%">
+    <template #header="{ close, titleId, titleClass }">
+      <h4>查看商品详情</h4>
+    </template>
+    <!-- 抽屉内容 -->
+    <el-card class="box-card">
+      <el-descriptions class="margin-top" :column="1" border>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">名称</div>
+          </template>
+          Apple iPhone 12 (A2404) 64GB 白色 支持移动联通电信5G 双卡双待手机
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">描述</div>
+          </template>
+          Apple iPhone 12 (A2404) 128GB 红色 支持移动联通电信5G 双卡双待手机
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">价格</div>
+          </template>
+          8197
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">平台属性</div>
+          </template>
+          <el-tag size="small" style="margin: 2px 10px;">苹果手机</el-tag>
+          <el-tag size="small" style="margin: 2px 10px;">苹果手机</el-tag>
+          <el-tag size="small" style="margin: 2px 10px;">苹果手机</el-tag>
+
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">销售属性</div>
+          </template>
+          <el-tag size="small" type="success" style="margin: 2px 10px;">白色</el-tag>
+          <el-tag size="small" type="success" style="margin: 2px 10px;">白色</el-tag>
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-card>
+    <!-- 轮播图 -->
+    <el-carousel
+      interval="4000"
+      type="card"
+      height="300px"
+      style="margin: 50px 0"
+    >
+      <el-carousel-item v-for="item in 6" :key="item">
+        <img
+          src="../../../../public/ecut.jpg"
+          alt=""
+          style="width: 100%; height: 100%"
+        />
+      </el-carousel-item>
+    </el-carousel>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 // 引入接口
-import { getSkuList, onSale, unSale } from '@/API/product/sku/index.ts'
+import {
+  getSkuList,
+  onSale,
+  unSale,
+  getSkuInfo,
+} from '@/API/product/sku/index.ts'
 // 引入ts类型
-import type { SkuListRes, SkuItem } from '@/API/product/sku/type.ts'
+import type { SkuListRes, SkuItem, SkuInfoRes } from '@/API/product/sku/type.ts'
 import { ElMessage } from 'element-plus'
 
 let currentPage = ref<number>(1) // 当前页
@@ -58,6 +126,8 @@ let pageSize = ref<number>(10) // 每页显示条数
 let total = ref<number>(100) // 总条数
 
 let skuList = ref<SkuItem[]>([]) // sku列表
+
+let visible = ref<boolean>(false) //抽屉的显示与隐藏
 
 onMounted(() => {
   getSkuListFn()
@@ -110,9 +180,26 @@ const Edit = () => {
   ElMessage.success('程序猿正在加班开发中...')
 }
 
-
-
-
+// 点击info按钮的回调
+const showDetail = () => {
+  visible.value = true
+}
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+</style>
