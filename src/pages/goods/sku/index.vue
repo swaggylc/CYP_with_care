@@ -31,7 +31,7 @@
           <el-button
             type="info"
             icon="Platform"
-            @click="showDetail"
+            @click="showDetail(row.id)"
           ></el-button>
           <el-button type="danger" icon="Delete"></el-button>
         </template>
@@ -47,46 +47,57 @@
       @size-change="changeSize"
     />
   </el-card>
-  <el-drawer v-model="visible" show-close="false" size="35%">
+  <el-drawer v-model="visible" show-close="false" size="30%">
     <template #header="{ close, titleId, titleClass }">
       <h4>查看商品详情</h4>
     </template>
     <!-- 抽屉内容 -->
     <el-card class="box-card">
       <el-descriptions class="margin-top" :column="1" border>
-        <el-descriptions-item>
+        <el-descriptions-item  label-align="center" width="25px">
           <template #label>
             <div class="cell-item">名称</div>
           </template>
-          Apple iPhone 12 (A2404) 64GB 白色 支持移动联通电信5G 双卡双待手机
+          {{ skuInfo.skuName }}
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item  label-align="center">
           <template #label>
             <div class="cell-item">描述</div>
           </template>
-          Apple iPhone 12 (A2404) 128GB 红色 支持移动联通电信5G 双卡双待手机
+          {{ skuInfo.skuDesc }}
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item  label-align="center">
           <template #label>
             <div class="cell-item">价格</div>
           </template>
-          8197
+          {{ skuInfo.price }}
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item  label-align="center">
           <template #label>
             <div class="cell-item">平台属性</div>
           </template>
-          <el-tag size="small" style="margin: 2px 10px;">苹果手机</el-tag>
-          <el-tag size="small" style="margin: 2px 10px;">苹果手机</el-tag>
-          <el-tag size="small" style="margin: 2px 10px;">苹果手机</el-tag>
-
+          <el-tag
+            v-for="item in skuInfo.skuAttrValueList"
+            :key="item.id"
+            size="small"
+            style="margin: 2px 10px"
+          >
+            {{ item.valueName }}
+          </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item>
+        <el-descriptions-item  label-align="center">
           <template #label>
             <div class="cell-item">销售属性</div>
           </template>
-          <el-tag size="small" type="success" style="margin: 2px 10px;">白色</el-tag>
-          <el-tag size="small" type="success" style="margin: 2px 10px;">白色</el-tag>
+          <el-tag
+            v-for="item in skuInfo.skuSaleAttrValueList"
+            :key="item.id"
+            size="small"
+            type="success"
+            style="margin: 2px 10px"
+          >
+            {{ item.saleAttrValueName }}
+          </el-tag>
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
@@ -97,19 +108,15 @@
       height="300px"
       style="margin: 50px 0"
     >
-      <el-carousel-item v-for="item in 6" :key="item">
-        <img
-          src="../../../../public/ecut.jpg"
-          alt=""
-          style="width: 100%; height: 100%"
-        />
+      <el-carousel-item v-for="item in skuInfo.skuImageList" :key="item.id">
+        <img :src="item.imgUrl" alt="" style="width: 100%; height: 100%" />
       </el-carousel-item>
     </el-carousel>
   </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 // 引入接口
 import {
   getSkuList,
@@ -128,6 +135,8 @@ let total = ref<number>(100) // 总条数
 let skuList = ref<SkuItem[]>([]) // sku列表
 
 let visible = ref<boolean>(false) //抽屉的显示与隐藏
+
+let skuInfo = reactive<any>({})
 
 onMounted(() => {
   getSkuListFn()
@@ -181,7 +190,14 @@ const Edit = () => {
 }
 
 // 点击info按钮的回调
-const showDetail = () => {
+const showDetail = async (id: number) => {
+  // 发送请求获取信息
+  let res: SkuInfoRes = await getSkuInfo(id)
+  if (res.code == 200) {
+    let obj = JSON.parse(JSON.stringify(res.data))
+    Object.assign(skuInfo, obj)
+  }
+
   visible.value = true
 }
 </script>
