@@ -33,7 +33,15 @@
             icon="Platform"
             @click="showDetail(row.id)"
           ></el-button>
-          <el-button type="danger" icon="Delete"></el-button>
+          <el-popconfirm
+            title="确定删除该商品吗?"
+            width="180px"
+            @confirm="DeleteSku(row.id)"
+          >
+            <template #reference>
+              <el-button type="danger" icon="Delete"></el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -54,25 +62,25 @@
     <!-- 抽屉内容 -->
     <el-card class="box-card">
       <el-descriptions class="margin-top" :column="1" border>
-        <el-descriptions-item  label-align="center" width="25px">
+        <el-descriptions-item label-align="center" width="25px">
           <template #label>
             <div class="cell-item">名称</div>
           </template>
           {{ skuInfo.skuName }}
         </el-descriptions-item>
-        <el-descriptions-item  label-align="center">
+        <el-descriptions-item label-align="center">
           <template #label>
             <div class="cell-item">描述</div>
           </template>
           {{ skuInfo.skuDesc }}
         </el-descriptions-item>
-        <el-descriptions-item  label-align="center">
+        <el-descriptions-item label-align="center">
           <template #label>
             <div class="cell-item">价格</div>
           </template>
           {{ skuInfo.price }}
         </el-descriptions-item>
-        <el-descriptions-item  label-align="center">
+        <el-descriptions-item label-align="center">
           <template #label>
             <div class="cell-item">平台属性</div>
           </template>
@@ -85,7 +93,7 @@
             {{ item.valueName }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item  label-align="center">
+        <el-descriptions-item label-align="center">
           <template #label>
             <div class="cell-item">销售属性</div>
           </template>
@@ -123,6 +131,7 @@ import {
   onSale,
   unSale,
   getSkuInfo,
+  deleteSku,
 } from '@/API/product/sku/index.ts'
 // 引入ts类型
 import type { SkuListRes, SkuItem, SkuInfoRes } from '@/API/product/sku/type.ts'
@@ -197,8 +206,21 @@ const showDetail = async (id: number) => {
     let obj = JSON.parse(JSON.stringify(res.data))
     Object.assign(skuInfo, obj)
   }
-
   visible.value = true
+}
+
+// 点击删除按钮后确认的回调
+const DeleteSku = async (id: number) => {
+  let res: any = await deleteSku(id)
+  if (res.code == 200) {
+    ElMessage.success('删除成功！')
+    // 重新获取sku列表
+    getSkuListFn(
+      skuList.value.length == 1 ? currentPage.value - 1 : currentPage.value,
+    )
+  } else {
+    ElMessage.error(res.data)
+  }
 }
 </script>
 
