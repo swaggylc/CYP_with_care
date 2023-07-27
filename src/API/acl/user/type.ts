@@ -11,10 +11,10 @@ export interface User {
   username?: string
   password?: string
   name?: string
-  phone: null
-  roleName: string
-  createTime: string
-  updateTime: string
+  phone?: null
+  roleName?: string
+  createTime?: string
+  updateTime?: string
 }
 // 获取用户列表接口返回的数据类型
 export interface UserListResponse extends UserResponse {

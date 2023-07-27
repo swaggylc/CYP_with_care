@@ -50,28 +50,38 @@
   <el-drawer v-model="visible" :show-close="true" size="25%" title="添加用户">
     <el-form>
       <el-form-item label="用户姓名">
-        <el-input placeholder="请输入用户名"></el-input>
+        <el-input
+          placeholder="请输入用户名"
+          v-model="userParams.username"
+        ></el-input>
       </el-form-item>
       <el-form-item label="用户昵称">
-        <el-input placeholder="请输入用户昵称"></el-input>
+        <el-input
+          placeholder="请输入用户昵称"
+          v-model="userParams.name"
+        ></el-input>
       </el-form-item>
       <el-form-item label="用户密码">
-        <el-input placeholder="请输入用户密码"></el-input>
+        <el-input
+          placeholder="请输入用户密码"
+          v-model="userParams.password"
+        ></el-input>
       </el-form-item>
     </el-form>
     <template #footer="">
-      <el-button type="primary">确定</el-button>
-      <el-button>取消</el-button>
+      <el-button type="primary" @click="confirm">确定</el-button>
+      <el-button @click="cancel">取消</el-button>
     </template>
   </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 // 引入接口
-import { getUserList } from '@/API/acl/user/index.ts'
+import { getUserList, addOrUpdateUser } from '@/API/acl/user/index.ts'
 // 引入ts类型
 import { UserListResponse, User } from '@/API/acl/user/type.ts'
+import { ElMessage } from 'element-plus'
 
 let currentPage = ref<number>(1)
 let pageSize = ref<number>(5)
@@ -80,6 +90,12 @@ let total = ref<number>(0)
 let userArr = ref<User[]>([]) // 用户列表数据
 
 let visible = ref<boolean>(false) // 控制抽屉的显示隐藏
+
+let userParams = reactive<User>({
+  name: '',
+  username: '',
+  password: '',
+})
 
 onMounted(() => {
   GetUserList()
@@ -108,6 +124,12 @@ const handleSizeChange = (val: number) => {
 // 点击添加用户按钮的回调
 const addUser = () => {
   visible.value = true
+  // 清空userParams
+  Object.assign(userParams, {
+    name: '',
+    username: '',
+    password: '',
+  })
 }
 
 // 点击编辑按钮的回调
@@ -115,17 +137,23 @@ const EditUser = (row: User) => {
   visible.value = true
 }
 
+// 点击抽屉确定按钮的回调
+const confirm = async () => {
+  // 判断是添加还是编辑
+  let res: any = await addOrUpdateUser(userParams)
+  if (res.code == 200) {
+    visible.value = false
+    ElMessage.success(userParams.id ? '编辑成功' : '添加成功')
+    GetUserList()
+  } else {
+    ElMessage.error(userParams.id ? '编辑失败' : '添加失败')
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
+// 点击取消按钮的回调
+const cancel = () => {
+  visible.value = false
+}
 </script>
 
 <style scoped lang="scss">
