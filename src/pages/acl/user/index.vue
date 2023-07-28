@@ -29,7 +29,9 @@
       <el-table-column label="更新时间" prop="updateTime"></el-table-column>
       <el-table-column label="操作" width="350" align="center">
         <template #="{ row, $index }">
-          <el-button type="primary" icon="User">分配角色</el-button>
+          <el-button type="primary" icon="User" @click="setRole(row)">
+            分配角色
+          </el-button>
           <el-button type="primary" icon="Edit" @click="EditUser(row)">
             编辑
           </el-button>
@@ -78,6 +80,26 @@
       <el-button @click="cancel">取消</el-button>
     </template>
   </el-drawer>
+  <el-drawer v-model="drawer" title="分配角色">
+    <el-form>
+      <el-form-item label="用户姓名">
+        <el-input v-model="userParams.username" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="角色列表">
+        <el-checkbox>全选</el-checkbox>
+        <el-checkbox-group
+        >
+          <el-checkbox v-for="city in 12" :key="city" :label="city">
+            {{ city }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button type="primary">确定</el-button>
+      <el-button>取消</el-button>
+    </template>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -94,7 +116,8 @@ let total = ref<number>(0)
 
 let userArr = ref<User[]>([]) // 用户列表数据
 
-let visible = ref<boolean>(false) // 控制抽屉的显示隐藏
+let visible = ref<boolean>(false) // 控制添加/修改用户抽屉的显示隐藏
+let drawer = ref<boolean>(false) // 控制分配角色抽屉的显示隐藏
 let elform = ref<any>()
 
 let userParams = reactive<User>({
@@ -224,6 +247,13 @@ const rules = {
       validator: validatorPassword,
     },
   ],
+}
+
+// 点击分配角色按钮的回调
+const setRole = (row: User) => {
+  drawer.value = true
+  // 存储参数传递的用户信息
+  Object.assign(userParams, row)
 }
 </script>
 
