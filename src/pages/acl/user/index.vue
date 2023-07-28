@@ -47,7 +47,12 @@
       @size-change="handleSizeChange"
     />
   </el-card>
-  <el-drawer v-model="visible" :show-close="true" size="25%" title="添加用户">
+  <el-drawer
+    v-model="visible"
+    :show-close="true"
+    size="25%"
+    :title="userParams.id ? '编辑用户' : '添加用户'"
+  >
     <el-form :model="userParams" :rules="rules" ref="elform">
       <el-form-item label="用户姓名" prop="username">
         <el-input
@@ -61,7 +66,7 @@
           v-model="userParams.name"
         ></el-input>
       </el-form-item>
-      <el-form-item label="用户密码" prop="password">
+      <el-form-item label="用户密码" prop="password" v-if="!userParams.id">
         <el-input
           placeholder="请输入用户密码"
           v-model="userParams.password"
@@ -125,6 +130,9 @@ const handleSizeChange = (val: number) => {
 // 点击添加用户按钮的回调
 const addUser = () => {
   visible.value = true
+  if (userParams.id) {
+    delete userParams.id
+  }
   // 清空userParams
   Object.assign(userParams, {
     name: '',
@@ -139,7 +147,12 @@ const addUser = () => {
 
 // 点击编辑按钮的回调
 const EditUser = (row: User) => {
+  // 重置表单的校验
+  nextTick(() => {
+    elform.value.resetFields()
+  })
   visible.value = true
+  Object.assign(userParams, row)
 }
 
 // 点击抽屉确定按钮的回调
@@ -151,7 +164,9 @@ const confirm = async () => {
   if (res.code == 200) {
     visible.value = false
     ElMessage.success(userParams.id ? '编辑成功' : '添加成功')
-    GetUserList()
+    GetUserList(userParams.id ? currentPage.value : 1)
+    // 刷新页面
+    window.location.reload()
   } else {
     ElMessage.error(userParams.id ? '编辑失败' : '添加失败')
   }
