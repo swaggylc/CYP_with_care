@@ -12,8 +12,8 @@
   </el-card>
   <el-card>
     <el-button type="primary" @click="addUser">添加</el-button>
-    <el-button type="danger">批量删除</el-button>
-    <el-table border style="margin: 20px 0" :data="userArr">
+    <el-button type="danger" :disabled="deleteIdArr.length >= 2 ? false : true" @click="deleteIdList">批量删除</el-button>
+    <el-table border style="margin: 20px 0" :data="userArr" @selection-change="selectionChange">
       <el-table-column type="selection" width="80" align="center" />
       <el-table-column label="#" width="100" align="center" type="index"></el-table-column>
       <el-table-column label="id" width="100" prop="id"></el-table-column>
@@ -30,7 +30,11 @@
           <el-button type="primary" icon="Edit" @click="EditUser(row)">
             编辑
           </el-button>
-          <el-button type="danger" icon="Delete">删除</el-button>
+          <el-popconfirm title="确定删除该用户吗?" width="180" @confirm="DeleteUser(row.id)">
+            <template #reference>
+              <el-button type="danger" icon="Delete">删除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -84,7 +88,9 @@ import {
   getUserList,
   addOrUpdateUser,
   getRoleList,
-  assignRole
+  assignRole,
+  deleteUser,
+  deleteBatch
 } from '@/API/acl/user/index.ts'
 // 引入ts类型
 import {
@@ -116,6 +122,8 @@ let allRoleList = ref<Role[]>([]) // 所有角色列表
 let currentRoleList = ref<Role[]>([]) // 当前用户的角色列表
 let checkAll = ref(false) // 全选按钮
 let isIndeterminate = ref(true) // 全选按钮的状态
+
+let deleteIdArr = ref<number[]>([]) // 批量删除的id数组
 
 
 onMounted(() => {
@@ -159,7 +167,6 @@ const addUser = () => {
     elform.value.clearValidate()
   })
 }
-
 // 点击编辑按钮的回调
 const EditUser = (row: User) => {
   visible.value = true
@@ -297,6 +304,42 @@ const addRole = async () => {
     ElMessage.error('分配角色失败')
   }
 }
+
+// 点击删除按钮确认的回调
+const DeleteUser = async (userid: number) => {
+  let res: any = await deleteUser(userid)
+  if (res.code == 200) {
+    ElMessage.success('删除成功')
+    GetUserList(userArr.value.length > 1 ? currentPage.value : currentPage.value - 1)
+  } else {
+    ElMessage.error('删除失败')
+  }
+}
+// tabe的lselectionChange事件
+const selectionChange = (val: any) => {
+  deleteIdArr.value = val.map((item: User) => item.id)
+}
+// 批量删除按钮的回调
+const deleteIdList = async () => {
+  let res: any = await deleteBatch(deleteIdArr.value)
+  if (res.code == 200) {
+    ElMessage.success('批量删除成功')
+    GetUserList(userArr.value.length > 1 ? currentPage.value : currentPage.value - 1)
+  } else {
+    ElMessage.error('批量删除失败')
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 </script>
 

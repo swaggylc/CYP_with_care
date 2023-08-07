@@ -19,6 +19,10 @@ enum API {
   GETROLELIST_URL = '/admin/acl/user/toAssign/',
   // 给用户分配职位
   ASSIGNROLE_URL = '/admin/acl/user/doAssignRole',
+  // 删除某一个用户
+  DELETEUSER_URL = '/admin/acl/user/remove/',
+  // 批量删除用户
+  DELETEBATCH_URL = '/admin/acl/user/batchRemove',
 }
 
 // 获取用户列表的方法
@@ -42,4 +46,12 @@ export const getRoleList = (userId: string | number) => {
 // 分配职位的方法
 export const assignRole = (data: AssignRoleParams) => {
   return request.post<any, any>(API.ASSIGNROLE_URL, data)
+}
+// 删除某一个用户的方法
+export const deleteUser = (id: string | number) => {
+  return request.delete<any, any>(API.DELETEUSER_URL + id)
+}
+// 批量删除用户的方法
+export const deleteBatch = (idList: number[]) => {
+  return request.delete<any, any>(API.DELETEBATCH_URL, { data: idList })
 }
