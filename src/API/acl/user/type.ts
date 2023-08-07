@@ -47,3 +47,8 @@ export interface RoleListResponse extends UserResponse {
     allRolesList: Role[]
   }
 }
+// 分配职位方法的参数类型
+export interface AssignRoleParams {
+  userId: string | number
+  roleIdList: number[]
+}

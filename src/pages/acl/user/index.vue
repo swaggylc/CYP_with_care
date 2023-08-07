@@ -71,8 +71,8 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button type="primary">确定</el-button>
-      <el-button>取消</el-button>
+      <el-button type="primary" @click="addRole">确定</el-button>
+      <el-button @click="drawer = false">取消</el-button>
     </template>
   </el-drawer>
 </template>
@@ -84,13 +84,15 @@ import {
   getUserList,
   addOrUpdateUser,
   getRoleList,
+  assignRole
 } from '@/API/acl/user/index.ts'
 // 引入ts类型
 import {
   UserListResponse,
   User,
   RoleListResponse,
-  Role
+  Role,
+  AssignRoleParams
 } from '@/API/acl/user/type.ts'
 import { ElMessage } from 'element-plus'
 
@@ -253,15 +255,6 @@ const setRole = async (row: User) => {
   }
 
   drawer.value = true
-
-
-
-
-
-
-
-
-
 }
 
 // 全选按钮的回调
@@ -283,6 +276,26 @@ const handleCheckedChange = (val: any) => {
   // 样式
   isIndeterminate.value =
     checkedCount > 0 && checkedCount < allRoleList.value.length
+}
+// 点击抽屉(分配职位)确定按钮的回调
+const addRole = async () => {
+  // 收集参数
+  let roleIdList = currentRoleList.value.map((item) => item.id as number)
+  let userId = userParams.id as number
+  let data = {
+    roleIdList,
+    userId
+  }
+  // 发送请求
+  let res: any = await assignRole(data)
+  if (res.code == 200) {
+    ElMessage.success('分配角色成功')
+    drawer.value = false
+    // 重新获取用户列表,留在当前页
+    GetUserList(currentPage.value)
+  } else {
+    ElMessage.error('分配角色失败')
+  }
 }
 
 </script>
