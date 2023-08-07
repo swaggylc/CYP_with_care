@@ -2,7 +2,7 @@
   <el-card style="margin: 20px 0">
     <el-form inline class="elform">
       <el-form-item label="用户名：">
-        <el-input />
+        <el-input placeholder="请输入用户名" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary">搜索</el-button>
@@ -15,12 +15,7 @@
     <el-button type="danger">批量删除</el-button>
     <el-table border style="margin: 20px 0" :data="userArr">
       <el-table-column type="selection" width="80" align="center" />
-      <el-table-column
-        label="#"
-        width="100"
-        align="center"
-        type="index"
-      ></el-table-column>
+      <el-table-column label="#" width="100" align="center" type="index"></el-table-column>
       <el-table-column label="id" width="100" prop="id"></el-table-column>
       <el-table-column label="用户名字" prop="name"></el-table-column>
       <el-table-column label="用户名称" prop="username"></el-table-column>
@@ -39,40 +34,20 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :page-sizes="[5, 10, 15, 20]"
-      layout=" prev, pager, next, jumper,->, sizes,total"
-      :total="total"
-      @current-change="GetUserList"
-      @size-change="handleSizeChange"
-    />
+    <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[5, 10, 15, 20]"
+      layout=" prev, pager, next, jumper,->, sizes,total" :total="total" @current-change="GetUserList"
+      @size-change="handleSizeChange" />
   </el-card>
-  <el-drawer
-    v-model="visible"
-    :show-close="true"
-    size="25%"
-    :title="userParams.id ? '编辑用户' : '添加用户'"
-  >
+  <el-drawer v-model="visible" :show-close="true" size="25%" :title="userParams.id ? '编辑用户' : '添加用户'">
     <el-form :model="userParams" :rules="rules" ref="elform">
       <el-form-item label="用户姓名" prop="username">
-        <el-input
-          placeholder="请输入用户名"
-          v-model="userParams.username"
-        ></el-input>
+        <el-input placeholder="请输入用户名" v-model="userParams.username"></el-input>
       </el-form-item>
       <el-form-item label="用户昵称" prop="name">
-        <el-input
-          placeholder="请输入用户昵称"
-          v-model="userParams.name"
-        ></el-input>
+        <el-input placeholder="请输入用户昵称" v-model="userParams.name"></el-input>
       </el-form-item>
       <el-form-item label="用户密码" prop="password" v-if="!userParams.id">
-        <el-input
-          placeholder="请输入用户密码"
-          v-model="userParams.password"
-        ></el-input>
+        <el-input placeholder="请输入用户密码" v-model="userParams.password"></el-input>
       </el-form-item>
     </el-form>
     <template #footer="">
@@ -86,11 +61,11 @@
         <el-input v-model="userParams.username" disabled></el-input>
       </el-form-item>
       <el-form-item label="角色列表">
-        <el-checkbox>全选</el-checkbox>
-        <el-checkbox-group
-        >
-          <el-checkbox v-for="city in 12" :key="city" :label="city">
-            {{ city }}
+        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
+        <!-- 显示所有职位 -->
+        <el-checkbox-group v-model="currentRoleList" @change="handleCheckedChange">
+          <el-checkbox v-for="role in allRoleList" :key="role.id" :label="role">
+            {{ role.roleName }}
           </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
@@ -105,9 +80,18 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
 // 引入接口
-import { getUserList, addOrUpdateUser } from '@/API/acl/user/index.ts'
+import {
+  getUserList,
+  addOrUpdateUser,
+  getRoleList,
+} from '@/API/acl/user/index.ts'
 // 引入ts类型
-import { UserListResponse, User } from '@/API/acl/user/type.ts'
+import {
+  UserListResponse,
+  User,
+  RoleListResponse,
+  Role
+} from '@/API/acl/user/type.ts'
 import { ElMessage } from 'element-plus'
 
 let currentPage = ref<number>(1)
@@ -125,6 +109,12 @@ let userParams = reactive<User>({
   username: '',
   password: '',
 })
+
+let allRoleList = ref<Role[]>([]) // 所有角色列表
+let currentRoleList = ref<Role[]>([]) // 当前用户的角色列表
+let checkAll = ref(false) // 全选按钮
+let isIndeterminate = ref(true) // 全选按钮的状态
+
 
 onMounted(() => {
   GetUserList()
@@ -250,11 +240,51 @@ const rules = {
 }
 
 // 点击分配角色按钮的回调
-const setRole = (row: User) => {
-  drawer.value = true
+const setRole = async (row: User) => {
   // 存储参数传递的用户信息
   Object.assign(userParams, row)
+  // 获取职位列表
+  let res: RoleListResponse = await getRoleList(userParams.id as number)
+  if (res.code == 200) {
+    // 存储所有角色列表
+    allRoleList.value = res.data.allRolesList
+    // 存储当前用户的角色列表
+    currentRoleList.value = res.data.assignRoles
+  }
+
+  drawer.value = true
+
+
+
+
+
+
+
+
+
 }
+
+// 全选按钮的回调
+const handleCheckAllChange = (val: boolean) => {
+  checkAll.value = val
+  if (val) {
+    currentRoleList.value = allRoleList.value
+  } else {
+    currentRoleList.value = []
+  }
+  isIndeterminate.value = false
+}
+// 单选按钮的change事件
+const handleCheckedChange = (val: any) => {
+  let checkedCount = val.length
+  // 全选按钮,是否全选
+  checkAll.value =
+    checkedCount === allRoleList.value.length && checkedCount > 0
+  // 样式
+  isIndeterminate.value =
+    checkedCount > 0 && checkedCount < allRoleList.value.length
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -262,6 +292,7 @@ const setRole = (row: User) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .el-form-item {
     margin-bottom: 0;
   }
