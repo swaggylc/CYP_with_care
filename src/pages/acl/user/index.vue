@@ -156,18 +156,18 @@ const addUser = () => {
   })
   nextTick(() => {
     // 清除表单的校验
-    elform.value.resetFields()
+    elform.value.clearValidate()
   })
 }
 
 // 点击编辑按钮的回调
 const EditUser = (row: User) => {
-  // 重置表单的校验
-  nextTick(() => {
-    elform.value.resetFields()
-  })
   visible.value = true
   Object.assign(userParams, row)
+  // 重置表单的校验
+  nextTick(() => {
+    elform.value.clearValidate()
+  })
 }
 
 // 点击抽屉确定按钮的回调
