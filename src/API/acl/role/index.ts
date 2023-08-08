@@ -12,6 +12,8 @@ enum API {
   UPDATEROLE_URL = '/admin/acl/role/update',
   // 获取全部权限数据
   GETALLPERMISSION_URL = '/admin/acl/permission/toAssign/',
+  // 给职位分配权限的接口
+  ASSIGNPERMISSION_URL = '/admin/acl/permission/doAssign',
 }
 
 // 获取角色列表的方法
@@ -32,5 +34,12 @@ export const addOrUpdateRole = (data: IRoleItem) => {
 export const getAllPermission = (roleId: number) => {
   return request.get<any, IPermissionListType>(
     API.GETALLPERMISSION_URL + roleId,
+  )
+}
+// 给职位分配权限的方法
+export const assignPermission = (roleId: number, permissionId: number[]) => {
+  return request.post<any, any>(
+    API.ASSIGNPERMISSION_URL +
+      `/?roleId=${roleId}&permissionId=${permissionId}`,
   )
 }

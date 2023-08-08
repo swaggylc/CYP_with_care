@@ -22,7 +22,7 @@
             <el-table-column label="操作" width="350" align="center">
                 <template #="{ row, $index }">
                     <!-- row代表单个职位对象 -->
-                    <el-button icon="User" type="primary" @click="setAcl(row.id)">分配权限</el-button>
+                    <el-button icon="User" type="primary" @click="setAcl(row)">分配权限</el-button>
                     <el-button icon="Edit" @click="editRole(row)">编辑</el-button>
                     <el-button icon="Delete" type="danger">删除</el-button>
                 </template>
@@ -55,8 +55,8 @@
         </template>
         <template #default>
             <!-- 抽屉主体部分 树形控件-->
-            <el-tree :data="PermissionList" show-checkbox node-key="id" default-expand-all :default-checked-keys="[5]"
-                :props="defaultProps" />
+            <el-tree ref="tree" :data="PermissionList" show-checkbox node-key="id" default-expand-all
+                :default-checked-keys="checkedIdList" :props="defaultProps" />
         </template>
         <template #footer>
             <div style="flex: auto">
@@ -70,7 +70,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
 // 引入接口
-import { getRolesList, addOrUpdateRole, getAllPermission } from '@/API/acl/role/index.ts'
+import { getRolesList, addOrUpdateRole, getAllPermission, assignPermission } from '@/API/acl/role/index.ts'
 // 引入ts类型
 import type { IRoleListType, IRoleItem, IPermissionListType, IPermissionItem } from '@/API/acl/role/type.ts'
 import { ElMessage } from 'element-plus';
@@ -94,6 +94,8 @@ let dialogForm = ref<any>()   // 弹窗表单实例
 
 let showDrawer = ref<boolean>(false) // 是否显示抽屉
 let PermissionList = ref<IPermissionItem[]>([]) // 权限列表
+let checkedIdList = ref<number[]>([]) // 选中的权限id列表(第四层)
+let tree = ref<any>()   // 树形控件实例
 
 onMounted(() => {
     GetRoleList()
@@ -174,28 +176,54 @@ const rules = {
 }
 
 // 点击分配权限按钮的回调
-const setAcl = async (id: number) => {
-    let res: IPermissionListType = await getAllPermission(id)
+const setAcl = async (row: IRoleItem) => {
+    showDrawer.value = true
+    Object.assign(addOrUpdateParams, row)
+    let res: IPermissionListType = await getAllPermission(row.id as number)
     if (res.code == 200) {
         // 存储权限列表
         PermissionList.value = res.data
-
-
-        showDrawer.value = true
+        // 过滤出选中的权限id
+        checkedIdList.value = filterCheckedId(PermissionList.value, [])
     }
-
-
-
-
-
 }
+// 过滤出选中的权限id
+const filterCheckedId = (data: IPermissionItem[], initArr: number[]) => {
+    data.forEach(item => {
+        if (item.select && item.level == 4) {
+            initArr.push(item.id)
+        }
+        if (item.children && item.children.length > 0) {
+            filterCheckedId(item.children, initArr)
+        }
+    })
+    return initArr
+}
+
+
 // 分配权限抽屉取消按钮的回调
 const cancelClick = () => {
     showDrawer.value = false
 }
 // 分配权限抽屉确认按钮的回调
-const confirmClick = () => {
+const confirmClick = async () => {
     showDrawer.value = false
+    let roleId = addOrUpdateParams.id as number
+    // 选中节点的id列表
+    let arr = tree.value.getCheckedKeys()
+    // 半选的节点的id列表
+    let halfCheckedArr = tree.value.getHalfCheckedKeys()
+    let permissionIdList = arr.concat(halfCheckedArr)
+    let res: any = await assignPermission(roleId, permissionIdList)
+    if (res.code == 200) {
+        ElMessage.success('分配权限成功!')
+        // 关闭抽屉
+        showDrawer.value = false
+        // 刷新角色列表
+        window.location.reload()
+    } else {
+        ElMessage.error('分配权限失败!')
+    }
 }
 
 
@@ -210,7 +238,7 @@ const confirmClick = () => {
 
 
 
-// 树形控件测试数据
+// 树形控件配置对象
 const defaultProps = {
     children: 'children',
     label: 'name',
