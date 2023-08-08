@@ -2,7 +2,7 @@
   <el-card style="margin: 20px 0">
     <el-form inline class="elform">
       <el-form-item label="用户名：">
-        <el-input placeholder="请输入用户名" v-model="searchData" />
+        <el-input placeholder="请输入用户名" v-model="searchData" clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :disabled="searchData.length == 0 ? true : false" @click="search">搜索</el-button>
@@ -337,8 +337,6 @@ const deleteIdList = async () => {
 // 搜索按钮的回调
 const search = () => {
   GetUserList(1)
-  // 清空搜索框
-  searchData.value = ''
 }
 // 点击重置按钮的回调
 const reSet = () => {
