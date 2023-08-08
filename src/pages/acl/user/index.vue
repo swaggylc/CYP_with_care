@@ -2,11 +2,11 @@
   <el-card style="margin: 20px 0">
     <el-form inline class="elform">
       <el-form-item label="用户名：">
-        <el-input placeholder="请输入用户名" />
+        <el-input placeholder="请输入用户名" v-model="searchData" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">搜索</el-button>
-        <el-button>重置</el-button>
+        <el-button type="primary" :disabled="searchData.length == 0 ? true : false" @click="search">搜索</el-button>
+        <el-button @click="reSet">重置</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -101,6 +101,9 @@ import {
   AssignRoleParams
 } from '@/API/acl/user/type.ts'
 import { ElMessage } from 'element-plus'
+// 引入仓库
+import useLayoutStore from '@/store/modules/menu.ts'
+let menuStore = useLayoutStore()
 
 let currentPage = ref<number>(1)
 let pageSize = ref<number>(5)
@@ -125,6 +128,7 @@ let isIndeterminate = ref(true) // 全选按钮的状态
 
 let deleteIdArr = ref<number[]>([]) // 批量删除的id数组
 
+let searchData = ref<string>('')  // 搜索框的值
 
 onMounted(() => {
   GetUserList()
@@ -136,6 +140,7 @@ const GetUserList = async (pager: number = 1) => {
   let res: UserListResponse = await getUserList(
     currentPage.value,
     pageSize.value,
+    searchData.value
   )
   if (res.code == 200) {
     // 储存数据
@@ -329,8 +334,16 @@ const deleteIdList = async () => {
     ElMessage.error('批量删除失败')
   }
 }
-
-
+// 搜索按钮的回调
+const search = () => {
+  GetUserList(1)
+  // 清空搜索框
+  searchData.value = ''
+}
+// 点击重置按钮的回调
+const reSet = () => {
+  menuStore.isRefresh = !menuStore.isRefresh
+}
 
 
 

@@ -26,9 +26,9 @@ enum API {
 }
 
 // 获取用户列表的方法
-export const getUserList = (page: number, size: number) => {
+export const getUserList = (page: number, size: number, username: string) => {
   return request.get<any, UserListResponse>(
-    API.GETUSERLIST_URL + `${page}/${size}`,
+    API.GETUSERLIST_URL + `${page}/${size}/?username=${username}`,
   )
 }
 // 添加/修改用户的方法

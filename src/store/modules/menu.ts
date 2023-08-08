@@ -12,9 +12,4 @@ let useLayoutStore = defineStore('layout', {
   },
 })
 
-
-
-
-
-
 export default useLayoutStore
