@@ -7,7 +7,7 @@ export interface IResponseData {
 
 // 获取角色列表的接口返回的单个角色数据类型
 export interface IRoleItem {
-  id?: number|string
+  id?: number | string
   roleName: string
   remark?: null
   createTime?: string
@@ -28,4 +28,23 @@ export interface IRoleListType extends IResponseData {
     searchCount: boolean
     pages: number
   }
+}
+// 单个权限的数据类型
+export interface IPermissionItem {
+  id: number
+  createTime: string
+  updateTime: string
+  pid: number
+  name: string
+  code: string
+  toCode: string
+  type: number
+  status: null
+  level: number
+  children?: IPermissionItem[]
+  select: boolean
+}
+// 获取权限列表的接口返回的数据类型
+export interface IPermissionListType extends IResponseData {
+  data: IPermissionItem[]
 }
