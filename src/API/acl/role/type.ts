@@ -7,7 +7,7 @@ export interface IResponseData {
 
 // 获取角色列表的接口返回的单个角色数据类型
 export interface IRoleItem {
-  id?: number
+  id?: number|string
   roleName: string
   remark?: null
   createTime?: string
