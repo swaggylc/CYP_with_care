@@ -4,6 +4,8 @@ import App from './App.vue'
 import ElementPlus from 'element-plus'
 // 引入 ElementPlus 样式
 import 'element-plus/dist/index.css'
+// 引入 ElementPlus 深色主题
+import 'element-plus/theme-chalk/dark/css-vars.css'
 // 国际化
 //@ts-ignore
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
