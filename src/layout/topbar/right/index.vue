@@ -6,7 +6,7 @@
             <!-- 表单组件 -->
             <el-form>
                 <el-form-item label="主题颜色">
-                    <el-color-picker v-model="color" show-alpha :predefine="predefineColors" />
+                    <el-color-picker @change="changeColor" v-model="color" show-alpha :predefine="predefineColors" />
                 </el-form-item>
                 <el-form-item label="模式切换">
                     <el-switch @change="changeType" v-model="modelChange" active-icon="Moon" inactive-icon="Sunny"
@@ -94,6 +94,13 @@ const changeType = () => {
     modelChange.value ? html.className = 'dark' : html.className = ''
 }
 
+// 取色器颜色更改的回调
+const changeColor = () => {
+    // 获取html根节点
+    let html = document.documentElement
+    // 设置html根节点的颜色
+    html.style.setProperty('--el-color-primary', color.value)
+}
 
 // 取色器相应设置
 const color = ref('rgba(255, 69, 0, 0.68)')
