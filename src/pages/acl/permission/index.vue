@@ -10,7 +10,11 @@
                     "添加菜单"
                 }}</el-button>
                 <el-button :disabled="row.level == 1" @click="editMenu(row)">编辑</el-button>
-                <el-button :disabled="row.level == 1" type="danger">删除</el-button>
+                <el-popconfirm title="确定删除该项吗?" width="180" @confirm="deleteMenuById(row.id)">
+                    <template #reference>
+                        <el-button :disabled="row.level == 1" type="danger">删除</el-button>
+                    </template>
+                </el-popconfirm>
             </template>
         </el-table-column>
     </el-table>
@@ -37,7 +41,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 // 引入接口
-import { getMenuList, addOrUpdateMenu } from '@/API/acl/menu/index.ts'
+import { getMenuList, addOrUpdateMenu, deleteMenu } from '@/API/acl/menu/index.ts'
 // 引入ts类型
 import type { MenuListType, MenuItem, AddOrUpdateMenuParamsType } from '@/API/acl/menu/type.ts'
 import { ElMessage } from 'element-plus';
@@ -96,7 +100,16 @@ const AddOrUpdateMenu = async () => {
         ElMessage.error(addOrUpdateParams.id ? "编辑失败" : "添加失败")
     }
 }
-
+// 气泡框确认按钮的回调
+const deleteMenuById = async (id: number) => {
+    let res: any = await deleteMenu(id)
+    if (res.code === 200) {
+        getMenuListData()
+        ElMessage.success("删除成功")
+    } else {
+        ElMessage.error("删除失败")
+    }
+}
 
 
 
