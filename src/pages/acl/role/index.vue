@@ -24,7 +24,11 @@
                     <!-- row代表单个职位对象 -->
                     <el-button icon="User" type="primary" @click="setAcl(row)">分配权限</el-button>
                     <el-button icon="Edit" @click="editRole(row)">编辑</el-button>
-                    <el-button icon="Delete" type="danger">删除</el-button>
+                    <el-popconfirm title="确定删除该角色吗?" @confirm="deleteRole(row.id)" width="180px">
+                        <template #reference>
+                            <el-button icon="Delete" type="danger">删除</el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -70,13 +74,14 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
 // 引入接口
-import { getRolesList, addOrUpdateRole, getAllPermission, assignPermission } from '@/API/acl/role/index.ts'
+import { getRolesList, addOrUpdateRole, getAllPermission, assignPermission, deleteRoleById } from '@/API/acl/role/index.ts'
 // 引入ts类型
 import type { IRoleListType, IRoleItem, IPermissionListType, IPermissionItem } from '@/API/acl/role/type.ts'
 import { ElMessage } from 'element-plus';
 
 // 引入仓库
 import useLayoutStore from '@/store/modules/menu.ts'
+import { ro } from 'element-plus/es/locale';
 let menuStore = useLayoutStore()
 
 let currentPage = ref(1)
@@ -225,7 +230,16 @@ const confirmClick = async () => {
         ElMessage.error('分配权限失败!')
     }
 }
-
+// 点击气泡框确认按钮的回调
+const deleteRole = async (id: number) => {
+    let res: any = await deleteRoleById(id)
+    if (res.code == 200) {
+        ElMessage.success('删除角色成功!')
+        GetRoleList(roleList.value.length > 1 ? currentPage.value : currentPage.value - 1)
+    } else {
+        ElMessage.error('删除角色失败!')
+    }
+}
 
 
 
