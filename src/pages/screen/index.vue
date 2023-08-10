@@ -7,7 +7,12 @@
                 <Top />
             </div>
             <div class="bottom">
-                <div class="left">左侧</div>
+                <div class="left">
+                    <!-- 引入子组件 -->
+                    <VisitorNow class="visitorNow" />
+                    <SexRatio class="sexRatio" />
+                    <AgeRatio class="ageRatio" />
+                </div>
                 <div class="center">中间</div>
                 <div class="right">右侧</div>
             </div>
@@ -19,6 +24,9 @@
 import { ref, onMounted } from 'vue'
 // 引入子组件
 import Top from './components/top/index.vue'
+import VisitorNow from './components/visitorNow/index.vue'
+import SexRatio from './components/sexRatio/index.vue'
+import AgeRatio from './components/ageRatio/index.vue'
 // 获取展示区域的dom
 let screen = ref()
 
@@ -66,7 +74,22 @@ window.onresize = () => {
             display: flex;
 
             .left {
+                display: flex;
+                flex-direction: column;
                 flex: 1;
+                height: 1040px;
+
+                .visitorNow {
+                    flex: 1.2;
+                }
+
+                .sexRatio {
+                    flex: 1;
+                }
+
+                .ageRatio {
+                    flex: 1;
+                }
             }
 
             .center {
@@ -80,4 +103,5 @@ window.onresize = () => {
             }
         }
     }
-}</style>
+}
+</style>
