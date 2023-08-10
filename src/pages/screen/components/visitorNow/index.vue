@@ -8,17 +8,68 @@
         <div class="numbers">
             <span v-for="(item, index) in people" :key="index">{{ item }}</span>
         </div>
-        <div class="charts">
-            charts
-        </div>
+        <div class="charts" ref="charts"></div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import * as echarts from 'echarts'
+import 'echarts-liquidfill'
+let people = ref('66514人')
+let charts = ref()
+onMounted(() => {
+    // 获取echarts实例
+    let myChart = echarts.init(charts.value)
+    // 指定图表的配置项和数据
+    myChart.setOption({
+        tooltip: {
+            show: true
+        },
+        title: {
 
-let people = ref('36514人')
+        },
+        // x轴
+        xAxis: {
 
+        },
+        // y轴
+        yAxis: {
+            axisLine: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+        },
+        // 系列
+        series: [{
+            type: 'liquidFill',
+            data: [0.62, 0.4, 0.2],
+            radius: '80%',
+            center: ['50%', '50%'],
+            outline: {
+                show: true,
+                borderDistance: 8,
+                itemStyle: {
+                    color: 'none',
+                    borderColor: '#294D99',
+                    borderWidth: 8,
+                    shadowBlur: 20,
+                    shadowColor: 'rgba(0, 0, 0, 0.25)'
+                }
+            },
+
+        }],
+        // 组件布局
+        grid: {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        }
+    })
+})
 
 
 </script>
@@ -60,6 +111,7 @@ let people = ref('36514人')
         margin-top: 30px;
         display: flex;
         padding: 10px;
+
         span {
             flex: 1;
             height: 60px;
@@ -72,10 +124,10 @@ let people = ref('36514人')
             font-size: 20px;
         }
     }
-    .charts{
+
+    .charts {
         width: 100%;
         height: 222px;
-        background-color: #29fcff;
     }
 }
 </style>
