@@ -13,7 +13,11 @@
                     <SexRatio class="sexRatio" />
                     <AgeRatio class="ageRatio" />
                 </div>
-                <div class="center">中间</div>
+                <div class="center">
+                    <!-- 引入子组件 -->
+                    <Map class="map" />
+                    <MapBottom class="mapBottom" />
+                </div>
                 <div class="right">右侧</div>
             </div>
         </div>
@@ -27,6 +31,8 @@ import Top from './components/top/index.vue'
 import VisitorNow from './components/visitorNow/index.vue'
 import SexRatio from './components/sexRatio/index.vue'
 import AgeRatio from './components/ageRatio/index.vue'
+import Map from './components/map/index.vue'
+import MapBottom from './components/mapBottom/index.vue'
 // 获取展示区域的dom
 let screen = ref()
 
@@ -94,7 +100,18 @@ window.onresize = () => {
 
             .center {
                 flex: 2;
+                display: flex;
+                flex-direction: column;
+                height: 960px;
+                margin-top: 50px;
 
+                .map {
+                    flex: 4;
+                }
+
+                .mapBottom {
+                    flex: 1;
+                }
             }
 
             .right {
