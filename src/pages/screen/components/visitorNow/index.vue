@@ -8,7 +8,7 @@
         <div class="numbers">
             <span v-for="(item, index) in people" :key="index">{{ item }}</span>
         </div>
-        <div class="charts" ref="charts"></div>
+        <div class="charts" ref="chartsOne"></div>
     </div>
 </template>
 
@@ -17,12 +17,12 @@ import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-liquidfill'
 let people = ref('66514人')
-let charts = ref()
+let chartsOne = ref()
 onMounted(() => {
     // 获取echarts实例
-    let myChart = echarts.init(charts.value)
+    let myChartLiquidfill = echarts.init(chartsOne.value)
     // 指定图表的配置项和数据
-    myChart.setOption({
+    myChartLiquidfill.setOption({
         tooltip: {
             show: true
         },
