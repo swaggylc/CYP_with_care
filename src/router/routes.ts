@@ -1,4 +1,5 @@
 // 对外暴露配置路由
+// 常量路由
 export const constantRoutes = [
   // 登录
   {
@@ -43,6 +44,19 @@ export const constantRoutes = [
       icon: 'DataBoard',
     },
   },
+  // 404页面
+  {
+    name: '404',
+    path: '/404',
+    component: () => import('@/pages/404/index.vue'),
+    meta: {
+      title: '404',
+      hidden: true,
+    },
+  },
+]
+// 异步路由
+export const asyncRoutes = [
   // 权限管理
   {
     name: 'acl',
@@ -141,24 +155,14 @@ export const constantRoutes = [
       },
     ],
   },
-  // 404页面
-  {
-    name: '404',
-    path: '/404',
-    component: () => import('@/pages/404/index.vue'),
-    meta: {
-      title: '404',
-      hidden: true,
-    },
-  },
-  // 任意路由
-  {
-    name: 'any',
-    path: '/:pathMatch(.*)*',
-    redirect: '/404',
-    meta: {
-      title: '任意路由',
-      hidden: true,
-    },
-  },
 ]
+// 任意路由
+export const anyRoute = {
+  name: 'any',
+  path: '/:pathMatch(.*)*',
+  redirect: '/404',
+  meta: {
+    title: '任意路由',
+    hidden: true,
+  },
+}
