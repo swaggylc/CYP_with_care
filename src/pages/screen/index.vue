@@ -103,7 +103,7 @@ window.onresize = () => {
                 display: flex;
                 flex-direction: column;
                 height: 960px;
-                margin-top: 50px;
+                margin-top: 30px;
 
                 .map {
                     flex: 4;

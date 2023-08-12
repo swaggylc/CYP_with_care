@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
+//@ts-ignore
 import chinaJson from './china.json'    // 引入地图数据
 let map = ref()
 echarts.registerMap('china', chinaJson) // 注册地图
