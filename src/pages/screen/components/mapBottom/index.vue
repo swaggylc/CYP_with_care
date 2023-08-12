@@ -91,11 +91,11 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .mapbottom {
-    width: 100%;
+    width: 95%;
     height: 100%;
     background: url(../../images/dataScreen-main-cb.png) no-repeat;
     background-size: 100% 100%;
-    margin: 0 20px;
+
 
     .title {
         p {

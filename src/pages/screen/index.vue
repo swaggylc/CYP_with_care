@@ -18,7 +18,12 @@
                     <Map class="map" />
                     <MapBottom class="mapBottom" />
                 </div>
-                <div class="right">右侧</div>
+                <div class="right">
+                    <!-- 引入子组件 -->
+                    <Ranking class="ranking" />
+                    <VisitorNumber class="visitorNumber" />
+                    <BookingType class="bookingType" />
+                </div>
             </div>
         </div>
     </div>
@@ -33,6 +38,9 @@ import SexRatio from './components/sexRatio/index.vue'
 import AgeRatio from './components/ageRatio/index.vue'
 import Map from './components/map/index.vue'
 import MapBottom from './components/mapBottom/index.vue'
+import Ranking from './components/ranking/index.vue'
+import VisitorNumber from './components/visitorNumber/index.vue'
+import BookingType from './components/bookingType/index.vue'
 // 获取展示区域的dom
 let screen = ref()
 
@@ -104,6 +112,7 @@ window.onresize = () => {
                 flex-direction: column;
                 height: 960px;
                 margin-top: 30px;
+                align-items: center;
 
                 .map {
                     flex: 4;
@@ -116,7 +125,21 @@ window.onresize = () => {
 
             .right {
                 flex: 1;
+                display: flex;
+                flex-direction: column;
+                height: 1040px;
 
+                .ranking {
+                    flex: 1.2;
+                }
+
+                .visitorNumber {
+                    flex: 1;
+                }
+
+                .bookingType {
+                    flex: 1;
+                }
             }
         }
     }
