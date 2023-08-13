@@ -162,4 +162,31 @@
     实际上，`next()`的调用会被视为当前导航完成，即使异步组件尚未加载完成。这意味着路由表不会得到更新，也不会重新触发路由导航，因此无法解决异步组件加载完成后渲染的问题，从而导致页面白屏。
     
     为了解决这个问题，你需要使用`next({...to})`，将目标路由的信息传递给`next`方法，以便在异步组件加载完成后，路由系统能够重新触发导航并正确渲染目标组件。这种做法会让路由系统知道用户的意图是前往目标路由，即使目标路由的组件尚未加载完成。
+    
+    **按钮权限的实现：**
+    
+    在用户仓库中收集用户的按钮权限数组，即可在组件的按钮上添加`v-if=‘userStore.buttons.includes（btn.User.add）’`，若不包含则隐藏按钮，但不便的是在每一个组件内都要引入用户仓库，略有繁琐，自定义指令可能更加便捷。
+    
+    自定义指令：
+    
+    ```js
+    export const isHasButton = (app: any) => {
+      // 全局自定义指令：判断当前用户是否有按钮权限
+      app.directive('has', {
+        // 代表使用当前指令的元素（DOM,组件）挂载完毕后执行一次
+        mounted(el: any, options: any) {
+          // console.log(userStore.buttons)
+          // 自定义指令右侧的值是否包含在仓库中的按钮权限中，如果不包含，就删除当前元素
+          if (!userStore.buttons.includes(options.value)) {
+            el.parentNode.removeChild(el)
+          }
+        },
+      })
+    }
+    
+    // z
+    <el-button type="primary" @click="addUser" v-has="`btn.User.add`">添加</el-button>
+    ```
+    
+12. 
 

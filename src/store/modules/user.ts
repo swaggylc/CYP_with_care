@@ -40,6 +40,8 @@ let useUserStore = defineStore('User', {
       menuList: constantRoutes, // 菜单列表
       username: '',
       avatar: '',
+      // 按钮权限
+      buttons: [],
     }
   },
 
@@ -68,6 +70,7 @@ let useUserStore = defineStore('User', {
         // 将用户信息存储到小仓库中
         this.username = res.data.name
         this.avatar = res.data.avatar
+        this.buttons = res.data.buttons
         // 计算当前用户需要展示的异步路由
         let userAsyncRoutes = filterAsyncRoutes(
           cloneDeep(asyncRoutes),

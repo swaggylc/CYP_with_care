@@ -11,7 +11,7 @@
     </el-form>
   </el-card>
   <el-card>
-    <el-button type="primary" @click="addUser">添加</el-button>
+    <el-button type="primary" @click="addUser" v-has="`btn.User.add`">添加</el-button>
     <el-button type="danger" :disabled="deleteIdArr.length >= 2 ? false : true" @click="deleteIdList">批量删除</el-button>
     <el-table border style="margin: 20px 0" :data="userArr" @selection-change="selectionChange">
       <el-table-column type="selection" width="80" align="center" />

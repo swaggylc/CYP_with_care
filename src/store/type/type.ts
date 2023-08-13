@@ -8,7 +8,8 @@ export interface UserState {
   token: string
   menuList: RouteRecordRaw[]
   username: string
-  avatar: string
+  avatar: string,
+  buttons: string[]
 }
 
 // 定义分类仓库state数据类型
