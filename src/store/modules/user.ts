@@ -14,12 +14,17 @@ import { SET_SOME, GET_SOME, REMOVE_SOME } from '@/utils/localFunction'
 // 引入常量路由,异步路由,任意路由
 import { constantRoutes, asyncRoutes, anyRoute } from '@/router/routes.ts'
 import router from '@/router'
+// 引入深拷贝方法
+//@ts-ignore
+import cloneDeep from 'lodash/cloneDeep'
 
 // 定义过滤异步路由的方法
 function filterAsyncRoutes(asyncRoutes: any, routes: any) {
   return asyncRoutes.filter((item: any) => {
     if (routes.includes(item.name)) {
       if (item.children && item.children.length > 0) {
+        // 其他账号登陆后，由于对异步路由的children进行了二次赋值，导致下一个账号登陆后，
+        // 异步路由的children会变成上一个账号过滤后的结果，即可能由4个子路由变为2个子路由，所以考虑深拷贝
         item.children = filterAsyncRoutes(item.children, routes)
       }
       return true
@@ -64,7 +69,10 @@ let useUserStore = defineStore('User', {
         this.username = res.data.name
         this.avatar = res.data.avatar
         // 计算当前用户需要展示的异步路由
-        let userAsyncRoutes = filterAsyncRoutes(asyncRoutes, res.data.routes)
+        let userAsyncRoutes = filterAsyncRoutes(
+          cloneDeep(asyncRoutes),
+          res.data.routes,
+        )
         // 菜单列表
         this.menuList = [...constantRoutes, ...userAsyncRoutes, anyRoute]
         // 目前路由器管理的只有常量路由：用户计算完后的异步路由和任意路由需要动态追加

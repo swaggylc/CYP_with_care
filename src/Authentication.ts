@@ -52,7 +52,8 @@ router.beforeEach(async (to, from, next) => {
         // 没有用户信息，获取用户信息
         try {
           await userStore.GetUserInfo()
-          next()
+          // 若此处访问的是异步路由，则可能导致虽然已经获取到了用户信息，但是异步路由还未添加到路由表中
+          next({ ...to })
         } catch (error) {
           // 有token，但是获取用户信息失败，token失效
           // 清空token
