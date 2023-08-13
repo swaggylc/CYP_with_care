@@ -59,7 +59,7 @@ export const constantRoutes = [
 export const asyncRoutes = [
   // 权限管理
   {
-    name: 'acl',
+    name: 'Acl',
     path: '/acl',
     component: () => import('@/layout/index.vue'),
     meta: {
@@ -70,7 +70,7 @@ export const asyncRoutes = [
     redirect: '/acl/user',
     children: [
       {
-        name: 'user',
+        name: 'User',
         path: '/acl/user',
         component: () => import('@/pages/acl/user/index.vue'),
         meta: {
@@ -80,7 +80,7 @@ export const asyncRoutes = [
         },
       },
       {
-        name: 'role',
+        name: 'Role',
         path: '/acl/role',
         component: () => import('@/pages/acl/role/index.vue'),
         meta: {
@@ -90,7 +90,7 @@ export const asyncRoutes = [
         },
       },
       {
-        name: 'permission',
+        name: 'Permission',
         path: '/acl/permission',
         component: () => import('@/pages/acl/permission/index.vue'),
         meta: {
@@ -103,19 +103,19 @@ export const asyncRoutes = [
   },
   // 商品管理
   {
-    name: 'goods',
-    path: '/goods',
+    name: 'Product',
+    path: '/product',
     component: () => import('@/layout/index.vue'),
     meta: {
       title: '商品管理',
       hidden: false,
       icon: 'ShoppingTrolley',
     },
-    redirect: '/goods/brand',
+    redirect: '/product/trademark',
     children: [
       {
-        name: 'brand',
-        path: '/goods/brand',
+        name: 'Trademark',
+        path: '/product/trademark',
         component: () => import('@/pages/goods/brand/index.vue'),
         meta: {
           title: '品牌管理',
@@ -124,8 +124,8 @@ export const asyncRoutes = [
         },
       },
       {
-        name: 'attr',
-        path: '/goods/attr',
+        name: 'Attr',
+        path: '/product/attr',
         component: () => import('@/pages/goods/attr/index.vue'),
         meta: {
           title: '属性管理',
@@ -134,8 +134,8 @@ export const asyncRoutes = [
         },
       },
       {
-        name: 'spu',
-        path: '/goods/spu',
+        name: 'Spu',
+        path: '/product/spu',
         component: () => import('@/pages/goods/spu/index.vue'),
         meta: {
           title: 'SPU管理',
@@ -144,8 +144,8 @@ export const asyncRoutes = [
         },
       },
       {
-        name: 'sku',
-        path: '/goods/sku',
+        name: 'Sku',
+        path: '/product/sku',
         component: () => import('@/pages/goods/sku/index.vue'),
         meta: {
           title: 'SKU管理',
@@ -158,7 +158,7 @@ export const asyncRoutes = [
 ]
 // 任意路由
 export const anyRoute = {
-  name: 'any',
+  name: 'Any',
   path: '/:pathMatch(.*)*',
   redirect: '/404',
   meta: {

@@ -3,12 +3,30 @@ import { defineStore } from 'pinia'
 // 引入登录接口
 import { login, getUserInfo, logout } from '@/API/user/index.ts'
 // 引入ts类型
-import type { LoginParamsType,LoginResponseType,GetUserInfoResponseType } from '@/API/user/type.ts'
+import type {
+  LoginParamsType,
+  LoginResponseType,
+  GetUserInfoResponseType,
+} from '@/API/user/type.ts'
 import type { UserState } from '@/store/type/type.ts'
 // 引入本地存储方法
 import { SET_SOME, GET_SOME, REMOVE_SOME } from '@/utils/localFunction'
-// 引入常量路由
-import { constantRoutes } from '@/router/routes.ts'
+// 引入常量路由,异步路由,任意路由
+import { constantRoutes, asyncRoutes, anyRoute } from '@/router/routes.ts'
+import router from '@/router'
+
+// 定义过滤异步路由的方法
+function filterAsyncRoutes(asyncRoutes: any, routes: any) {
+  return asyncRoutes.filter((item: any) => {
+    if (routes.includes(item.name)) {
+      if (item.children && item.children.length > 0) {
+        item.children = filterAsyncRoutes(item.children, routes)
+      }
+      return true
+    }
+  })
+}
+
 // 创建小仓库
 let useUserStore = defineStore('User', {
   state: (): UserState => {
@@ -39,10 +57,20 @@ let useUserStore = defineStore('User', {
     // 获取用户信息的方法
     async GetUserInfo() {
       let res: GetUserInfoResponseType = await getUserInfo()
+      // console.log(res.data.routes)
+
       if (res.code == 200) {
         // 将用户信息存储到小仓库中
         this.username = res.data.name
         this.avatar = res.data.avatar
+        // 计算当前用户需要展示的异步路由
+        let userAsyncRoutes = filterAsyncRoutes(asyncRoutes, res.data.routes)
+        // 菜单列表
+        this.menuList = [...constantRoutes, ...userAsyncRoutes, anyRoute]
+        // 目前路由器管理的只有常量路由：用户计算完后的异步路由和任意路由需要动态追加
+        ;[...userAsyncRoutes, anyRoute].forEach((route: any) => {
+          router.addRoute(route)
+        })
         return 'ok'
       } else {
         return Promise.reject(new Error(res.message))
